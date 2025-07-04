@@ -1,9 +1,3 @@
-Tentu, ini adalah draf `README.md` yang profesional untuk proyek Anda. File ini menjelaskan tujuan proyek, teknologi yang digunakan, cara instalasi, dan rencana fitur ke depan, sesuai dengan permintaan Anda.
-
-Anda bisa menyalin teks di bawah ini dan menyimpannya sebagai file `README.md` di folder utama proyek Anda.
-
------
-
 # NoctuaNovel
 
 ![image](https://github.com/user-attachments/assets/144c8923-3d60-4e95-94c9-87d1579c56a3)
