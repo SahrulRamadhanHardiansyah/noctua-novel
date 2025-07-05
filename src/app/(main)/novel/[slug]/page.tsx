@@ -13,6 +13,7 @@ type Props = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
+// @ts-ignore 
 const Page = async ({ params }: Props) => {
   const { slug } = params;
   const novel: NovelDetail = await getNovelResponse(`novel/${slug}`);
