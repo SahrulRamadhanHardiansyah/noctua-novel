@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Settings, Minus, Plus, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type ChapterClientProps = {
   chapterTitle: string;
@@ -16,6 +16,7 @@ const fontSizes = ["text-base", "text-lg", "text-xl", "text-2xl"];
 
 const ChapterClient = ({ chapterTitle, content, novelSlug }: ChapterClientProps) => {
   const [fontSizeIndex, setFontSizeIndex] = useState(1);
+  const router = useRouter();
 
   const handleFontSizeChange = (direction: "increase" | "decrease") => {
     if (direction === "increase" && fontSizeIndex < fontSizes.length - 1) setFontSizeIndex(fontSizeIndex + 1);
@@ -32,18 +33,16 @@ const ChapterClient = ({ chapterTitle, content, novelSlug }: ChapterClientProps)
     <div className="bg-gray-950 min-h-screen text-gray-300 pt-12">
       <main className="container mx-auto px-4 md:px-8 lg:px-36">
         <header className="py-3 flex justify-between items-center gap-4 mb-8">
-          <Link href={`/novel/${novelSlug}`} passHref>
-            <Button variant="outline" size="icon">
-              <ArrowLeft className="h-5 w-5 text-gray-950" />
-            </Button>
-          </Link>
+          <Button variant="outline" size="icon" onClick={() => router.back()}>
+            <ArrowLeft className="h-5 w-5 text-gray-900" />
+          </Button>
 
           <h1 className="text-lg font-semibold text-white text-center flex-grow mx-4">{chapterTitle}</h1>
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild={false}>
               <Button variant="outline" size="icon">
-                <Settings className="h-5 w-5 text-gray-950" />
+                <Settings className="h-5 w-5 text-gray-900" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
@@ -67,13 +66,11 @@ const ChapterClient = ({ chapterTitle, content, novelSlug }: ChapterClientProps)
 
         <article className={`w-full max-w-4xl mx-auto leading-loose transition-all duration-200 ${fontSizes[fontSizeIndex]}`}>{formattedContent}</article>
 
-        <div className="flex justify-center mt-18 pb-24">
-          <Link href={`/novel/${novelSlug}`} passHref>
-            <Button variant="secondary">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Chapter List
-            </Button>
-          </Link>
+        <div className="flex justify-center mt-12 pb-20">
+          <Button variant="secondary" onClick={() => router.back()}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Chapter List
+          </Button>
         </div>
       </main>
     </div>

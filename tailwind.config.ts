@@ -10,9 +10,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
-      },
+      // fontFamily bisa dihapus dari sini jika tidak ada customisasi lain
+      colors: {},
+      // ...
     },
   },
   plugins: [],

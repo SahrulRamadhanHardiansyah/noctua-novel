@@ -1,14 +1,15 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
+      // Konfigurasi yang sudah ada untuk gambar novel
       {
         protocol: "https",
         hostname: "bacalightnovel.co",
         port: "",
         pathname: "/wp-content/uploads/**",
       },
+      // Konfigurasi untuk gambar dari Clerk
       {
         protocol: "https",
         hostname: "img.clerk.com",
@@ -19,4 +20,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

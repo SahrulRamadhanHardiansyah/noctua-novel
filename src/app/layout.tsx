@@ -7,7 +7,6 @@ import "./globals.css";
 
 const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
@@ -19,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={cn("bg-background font-sans antialiased", outfit.variable)}>
+        <body className={cn("min-h-screen bg-background font-sans antialiased", outfit.className)}>
           {children}
           <Toaster richColors position="top-center" />
         </body>

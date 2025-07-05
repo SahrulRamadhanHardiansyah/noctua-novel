@@ -46,7 +46,7 @@ export const CommentSection = ({ novelSlug }: { novelSlug: string }) => {
     if (!newComment.trim()) return;
 
     setIsLoading(true);
-    const response = await fetch("/api/comment", {
+    const response = await fetch("/api/comments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ novelSlug, content: newComment }),

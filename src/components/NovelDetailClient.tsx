@@ -23,8 +23,8 @@ export const NovelDetailClient = async ({ slug }: { slug: string }) => {
     <div className="bg-black text-white min-h-screen">
       <section className="relative pt-40 pb-16">
         <div className="absolute inset-0">
-          <Image src={novel.image_url} alt={`${novel.title} background`} fill className="object-cover opacity-10 blur-2xl" />
-          <div className="absolute inset-0 bg-black/60" />
+          <Image src={novel.image_url} alt={`${novel.title} background`} fill className="object-cover opacity-50 blur-2xl" />
+          <div className="absolute inset-0" />
         </div>
 
         <div className="relative container mx-auto px-6 md:px-16 lg:px-36 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start">
@@ -67,6 +67,8 @@ export const NovelDetailClient = async ({ slug }: { slug: string }) => {
             </div>
           </div>
         </div>
+
+        {/* <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent"></div> */}
       </section>
 
       <section className="pb-24 -mt-4">
