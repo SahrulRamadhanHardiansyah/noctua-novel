@@ -8,14 +8,14 @@ import { Star, BookOpen, Layers, User } from "lucide-react";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { CommentSection } from "@/components/CommentSection";
 
-type DetailPageProps = {
-  params: {
-    slug: string;
-  };
-};
+// type DetailPageProps = {
+//   params: {
+//     slug: string;
+//   };
+// };
 
-const Page = async ({ params }: DetailPageProps) => {
-  const { slug } = await params;
+const Page = async ({ params }: { params: { slug: string } }) => {
+  const { slug } = params;
   const novel: NovelDetail = await getNovelResponse(`novel/${slug}`);
 
   if (!novel) {
