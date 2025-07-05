@@ -5,10 +5,10 @@ type Props = {
   params: { slug: string };
 };
 
-const Page = async ({ params }: Props) => {
+const Page = ({ params }: Props) => {
   const { slug } = params;
 
   return <NovelDetailClient slug={slug} />;
 };
 
-export default Page;
+export default Page as any;
