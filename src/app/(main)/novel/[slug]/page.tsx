@@ -5,7 +5,7 @@ type Props = {
   params: { slug: string };
 };
 
-const Page = ({ params }: Props) => {
+const Page = async ({ params }: Props) => {
   const { slug } = params;
 
   return <NovelDetailClient slug={slug} />;
