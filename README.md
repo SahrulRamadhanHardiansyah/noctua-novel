@@ -41,10 +41,11 @@ Proyek ini dibagi menjadi dua bagian utama: frontend (aplikasi web) dan backend 
 * **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
 * **ORM**: [Prisma](https://www.prisma.io/)
 
-**Deployment:**
+**Deployment & Tools:**
 
-* **Frontend**: [Vercel](https://vercel.com/)
-* **Database**: [Supabase](https://supabase.com/)
+* **Platform Deployment**: Vercel (Frontend), Render (Backend)
+* **Package Manager**: npm
+* **Code Quality**: ESLint & Prettier
 
 ## 🚀 Memulai Proyek
 
