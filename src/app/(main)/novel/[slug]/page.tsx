@@ -5,6 +5,8 @@ import { getNovelResponse } from "@/lib/api-libs";
 import { NovelDetail } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Star, BookOpen, Layers, User } from "lucide-react";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { CommentSection } from "@/components/CommentSection";
 
 type DetailPageProps = {
   params: {
@@ -13,7 +15,7 @@ type DetailPageProps = {
 };
 
 const Page = async ({ params }: DetailPageProps) => {
-  const { slug } = params;
+  const { slug } = await params;
   const novel: NovelDetail = await getNovelResponse(`novel/${slug}`);
 
   if (!novel) {
@@ -62,6 +64,8 @@ const Page = async ({ params }: DetailPageProps) => {
               ))}
             </div>
 
+            <FavoriteButton novelSlug={slug} />
+
             <div>
               <h2 className="text-xl font-semibold mb-2 mt-4">Synopsis</h2>
               <p className="text-gray-300 text-base leading-relaxed">{novel.synopsis}</p>
@@ -90,6 +94,10 @@ const Page = async ({ params }: DetailPageProps) => {
           </div>
         </div>
       </section>
+
+      <div className="container mx-auto px-6 md:px-16 lg:px-36 py-14">
+        <CommentSection novelSlug={slug} />
+      </div>
     </div>
   );
 };
