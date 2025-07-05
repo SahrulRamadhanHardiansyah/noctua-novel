@@ -11,4 +11,4 @@ const Page = ({ params }: Props) => {
   return <SearchResults keyword={keyword} />;
 };
 
-export default Page;
+export default Page as any;
