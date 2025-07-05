@@ -35,8 +35,16 @@ Proyek ini dibagi menjadi dua bagian utama: frontend (aplikasi web) dan backend 
 
 **Backend:**
 
-  * **Framework**: [Flask](https://flask.palletsprojects.com/) (Python)
-  * **Web Scraping**: [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/) & [Requests](https://requests.readthedocs.io/en/latest/)
+* **Framework**: [Flask](https://flask.palletsprojects.com/)
+* **Bahasa**: [Python](https://www.python.org/)
+* **Web Scraping**: [Beautiful Soup 4](https://www.crummy.com/software/BeautifulSoup/) & [Requests](https://requests.readthedocs.io/en/latest/)
+* **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
+* **ORM**: [Prisma](https://www.prisma.io/)
+
+**Deployment:**
+
+* **Frontend**: [Vercel](https://vercel.com/)
+* **Database**: [Supabase](https://supabase.com/)
 
 ## 🚀 Memulai Proyek
 
@@ -106,8 +114,6 @@ Sekarang, buka `http://localhost:3000` di browser Anda untuk melihat aplikasinya
 
 Proyek ini masih dalam tahap pengembangan. Berikut adalah beberapa fitur yang direncanakan untuk ditambahkan di masa depan:
 
-  - [ ] **Sistem Favorit/Bookmark**: Kemampuan bagi pengguna untuk menyimpan novel favorit mereka.
-  - [ ] **Fitur Komentar**: Menambahkan bagian komentar di setiap halaman detail novel.
   - [ ] **Riwayat Baca**: Melacak chapter terakhir yang dibaca oleh pengguna.
   - [ ] **Paginasi**: Menambahkan navigasi halaman untuk daftar novel yang panjang.
 
