@@ -8,13 +8,12 @@ import { Star, BookOpen, Layers, User } from "lucide-react";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { CommentSection } from "@/components/CommentSection";
 
-// type DetailPageProps = {
-//   params: {
-//     slug: string;
-//   };
-// };
+type Props = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
-const Page = async ({ params }: { params: { slug: string } }) => {
+const Page = async ({ params }: Props) => {
   const { slug } = params;
   const novel: NovelDetail = await getNovelResponse(`novel/${slug}`);
 
