@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 
-export async function DELETE(request: Request, { params }: { params: { commentId: string } }) {
+export async function DELETE(request: Request, context: { params: { commentId: string } }) {
   try {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { commentId } = params;
+    const { commentId } = context.params;
 
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },
@@ -27,7 +27,7 @@ export async function DELETE(request: Request, { params }: { params: { commentId
       where: { id: commentId },
     });
 
-    return NextResponse.json({ message: "Comment deleted" }, { status: 200 });
+    return NextResponse.json({ message: "Comment deleted" });
   } catch (error) {
     console.error("DELETE COMMENT ERROR:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
