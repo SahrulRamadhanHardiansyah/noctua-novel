@@ -7,9 +7,7 @@
 ![image](https://github.com/user-attachments/assets/32846021-ef4e-4637-b5c1-0f92bc109f88)
 
 
-\<p align="center"\>
 Aplikasi web modern untuk membaca novel yang dibangun dengan Next.js dan didukung oleh API web scraping kustom. Proyek ini memungkinkan pengguna untuk menelusuri, mencari, dan membaca berbagai novel yang bersumber dari web dengan antarmuka yang bersih dan responsif.
-\</p\>
 
 ### [🔗 Lihat Versi Live](https://noctua-novel.vercel.app/)
 
