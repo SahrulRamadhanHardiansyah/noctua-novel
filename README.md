@@ -6,118 +6,135 @@
 
 ![image](https://github.com/user-attachments/assets/32846021-ef4e-4637-b5c1-0f92bc109f88)
 
+A modern web application for reading novels, built with Next.js and powered by a custom web scraping API. This project allows users to browse, search, and read a wide range of novels sourced from the web with a clean and responsive interface.
 
-Aplikasi web modern untuk membaca novel yang dibangun dengan Next.js dan didukung oleh API web scraping kustom. Proyek ini memungkinkan pengguna untuk menelusuri, mencari, dan membaca berbagai novel yang bersumber dari web dengan antarmuka yang bersih dan responsif.
+### [🔗 Live Preview](https://noctua-novel.vercel.app/)
 
-### [🔗 Lihat Versi Live](https://noctua-novel.vercel.app/)
+## ✨ Key Features
 
-## ✨ Fitur Utama
+* **Browse Novels**: View novels by latest releases, editor’s picks, and recommendations.
+* **Advanced Search**: Search novels by title using a dynamic UI.
+* **Detail Page**: View complete novel information including synopsis, genre, status, and chapter list.
+* **Immersive Reading Page**: Distraction-free reading experience with customizable font size.
+* **User Authentication**: Secure login and registration system using Clerk.
+* **Responsive Design**: Optimized layout across devices, from desktop to mobile.
 
-  - **Browse Novel**: Menampilkan novel berdasarkan rilisan terbaru, pilihan editor, dan rekomendasi.
-  - **Pencarian Lanjutan**: Mencari novel berdasarkan judul dengan antarmuka yang dinamis.
-  - **Halaman Detail**: Tampilan informasi lengkap novel, termasuk sinopsis, genre, status, dan daftar chapter.
-  - **Halaman Baca Imersif**: Pengalaman membaca yang fokus dengan opsi untuk menyesuaikan ukuran font.
-  - **Autentikasi Pengguna**: Sistem login dan registrasi yang aman menggunakan Clerk.
-  - **Desain Responsif**: Tampilan yang optimal di berbagai perangkat, dari desktop hingga mobile.
+## 🛠️ Tech Stack
 
-## 🛠️ Teknologi yang Digunakan
-
-Proyek ini dibagi menjadi dua bagian utama: frontend (aplikasi web) dan backend (API).
+This project is split into two main parts: the frontend (web app) and backend (API).
 
 **Frontend:**
 
-  * **Framework**: [Next.js](https://nextjs.org/) (App Router)
-  * **Bahasa**: [TypeScript](https://www.typescriptlang.org/)
-  * **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-  * **Komponen UI**: [shadcn/ui](https://ui.shadcn.com/)
-  * **Autentikasi**: [Clerk](https://clerk.com/)
-  * **Icons**: [Lucide React](https://lucide.dev/)
+* **Framework**: [Next.js](https://nextjs.org/) (App Router)
+* **Language**: [TypeScript](https://www.typescriptlang.org/)
+* **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+* **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+* **Authentication**: [Clerk](https://clerk.com/)
+* **Icons**: [Lucide React](https://lucide.dev/)
 
 **Backend:**
 
 * **Framework**: [Flask](https://flask.palletsprojects.com/)
-* **Bahasa**: [Python](https://www.python.org/)
+* **Language**: [Python](https://www.python.org/)
 * **Web Scraping**: [Beautiful Soup 4](https://www.crummy.com/software/BeautifulSoup/) & [Requests](https://requests.readthedocs.io/en/latest/)
 * **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
 * **ORM**: [Prisma](https://www.prisma.io/)
 
 **Deployment & Tools:**
 
-* **Platform Deployment**: Vercel (Frontend), Render (Backend)
+* **Deployment Platforms**: Vercel (Frontend), Render (Backend)
 * **Package Manager**: npm
 * **Code Quality**: ESLint & Prettier
 
-## 🚀 Memulai Proyek
+## 🚀 Getting Started
 
-Untuk menjalankan proyek ini secara lokal, Anda perlu menyiapkan backend (API) dan frontend (Next.js) secara terpisah.
+To run this project locally, you’ll need to set up the backend (API) and frontend (Next.js) separately.
 
-### Prasyarat
+### Prerequisites
 
-  - Node.js (v18.17 atau lebih baru)
-  - Python (v3.8 atau lebih baru) & pip
+* Node.js (v18.17 or newer)
+* Python (v3.8 or newer) & pip
 
-### 1\. Instalasi Backend (Flask API)
+### 1. Backend Setup (Flask API)
 
-API ini bertanggung jawab untuk melakukan scraping data novel.
+This API handles novel data scraping.
 
 ```bash
-# 1. Clone repository ini
+# 1. Clone the repository
 git clone https://github.com/SahrulRamadhanHardiansyah/novel-api
 
-# 2. Masuk ke folder backend
+# 2. Navigate to the backend folder
 cd novel-api
 
-# 3. Buat dan aktifkan virtual environment (direkomendasikan)
+# 3. Create and activate a virtual environment (recommended)
 python -m venv venv
-source venv/bin/activate  # Untuk MacOS/Linux
-# atau
-.\venv\Scripts\activate  # Untuk Windows
+source venv/bin/activate  # For MacOS/Linux
+# or
+.\venv\Scripts\activate  # For Windows
 
-# 4. Instal semua library yang dibutuhkan
-# Jika Anda belum punya requirements.txt, buat dengan: pip freeze > requirements.txt
+# 4. Install dependencies
 pip install -r requirements.txt
 
-# 5. Jalankan server Flask
-# Port default adalah 5001
+# 5. Run the Flask server
+# Default port is 5001
 python app.py
 ```
 
-### 2\. Instalasi Frontend (Next.js App)
+### 2. Frontend Setup (Next.js App)
 
-Aplikasi web utama yang akan diakses oleh pengguna.
+This is the main web app users will interact with.
 
 ```bash
-# 1. Clone repository ini
+# 1. Clone the repository
 git clone https://github.com/SahrulRamadhanHardiansyah/noctua-novel
 
-# 2. Buka terminal baru dan masuk ke folder frontend
+# 2. Open a new terminal and go to the frontend folder
 cd noctua-novel
 
-# 3. Instal semua dependencies
+# 3. Install dependencies
 npm install
 
-# 4. Buat file environment variable
-# Salin dari .env.example dan ganti isinya dengan kunci Anda
+# 4. Create environment variable file
+# Copy from .env.example and replace with your own keys
 cp .env.example .env.local
 
-# 5. Isi file .env.local dengan kunci dari Clerk dan URL API Anda
+# 5. Fill in the .env.local with your Clerk and API keys
 NEXT_PUBLIC_API_URL=http://localhost:5001
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YOUR_PUBLISHABLE_KEY
 CLERK_SECRET_KEY=sk_test_YOUR_SECRET_KEY
 
-# 6. Jalankan server development Next.js
+# 6. Run the Next.js development server
 npm run dev
 ```
 
-Sekarang, buka `http://localhost:3000` di browser Anda untuk melihat aplikasinya.
+Open `http://localhost:3000` in your browser to view the app.
 
-## 📝 To-Do / Rencana Fitur
+---
 
-Proyek ini masih dalam tahap pengembangan. Berikut adalah beberapa fitur yang direncanakan untuk ditambahkan di masa depan:
+## 🔐 Clerk Authentication Notice
 
-  - [ ] **Riwayat Baca**: Melacak chapter terakhir yang dibaca oleh pengguna.
-  - [ ] **Paginasi**: Menambahkan navigasi halaman untuk daftar novel yang panjang.
+Clerk currently **does not support phone number login for Indonesia (+62)** due to SMS limitations.
 
-## 📄 Lisensi
+### ✅ Use Test Credentials for Login:
 
-Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanjut.
+* **Phone Number:** `+15555550100`
+* **Verification Code:** `424242`
+
+Use this test number during development to log in.
+
+> ⚠️ Do not use in production. This test number is public and not secure.
+
+More info: [Clerk Test Phone Numbers](https://clerk.com/docs/testing/overview)
+
+---
+
+## 📝 To-Do / Feature Plans
+
+This project is still under development. Upcoming features include:
+
+* [ ] **Reading History**: Track the last-read chapter for each user.
+* [ ] **Pagination**: Add navigation for long novel lists.
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
