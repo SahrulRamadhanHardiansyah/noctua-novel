@@ -11,6 +11,8 @@
 Aplikasi web modern untuk membaca novel yang dibangun dengan Next.js dan didukung oleh API web scraping kustom. Proyek ini memungkinkan pengguna untuk menelusuri, mencari, dan membaca berbagai novel yang bersumber dari web dengan antarmuka yang bersih dan responsif.
 \</p\>
 
+### [🔗 Lihat Versi Live](https://noctua-novel.vercel.app/)
+
 ## ✨ Fitur Utama
 
   - **Browse Novel**: Menampilkan novel berdasarkan rilisan terbaru, pilihan editor, dan rekomendasi.
