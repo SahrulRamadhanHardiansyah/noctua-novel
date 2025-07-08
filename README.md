@@ -77,7 +77,7 @@ pip install -r requirements.txt
 
 # 5. Run the Flask server
 # Default port is 5001
-python app.py
+python api.py
 ```
 
 ### 2. Frontend Setup (Next.js App)
