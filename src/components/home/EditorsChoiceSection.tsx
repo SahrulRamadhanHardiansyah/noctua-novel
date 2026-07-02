@@ -19,7 +19,7 @@ const EditorsChoiceSection = ({ apiData }: EditorsChoiceProps) => {
 
             return (
               <div key={novelSlug} className="w-40 sm:w-44 flex-shrink-0">
-                <NovelCard slug={novelSlug} title={novel.title} imageUrl={novel.image_url} genres={novel.genres} />
+                <NovelCard slug={novelSlug} title={novel.title} imageUrl={novel.image_url} genres={novel.genres ?? undefined} />
               </div>
             );
           })}

@@ -5,12 +5,16 @@ import RecommendationSection from "@/components/home/RecommendationSection";
 import HeroSection from "@/components/home/HeroSection";
 import { getNovelResponse } from "@/lib/api-libs";
 import QuoteSection from "@/components/QuoteSection";
+import { Novel } from "@/types";
 
-const page = async () => {
-  const latestNovels = await getNovelResponse("terbaru");
+const Page = async () => {
+  const [latestNovels, recommendedNovels, editorsChoice] = await Promise.all([
+    getNovelResponse<Novel[]>("terbaru"),
+    getNovelResponse<Novel[]>("rekomendasi"),
+    getNovelResponse<Novel[]>("pilihan-editor"),
+  ]);
+
   const limitedLatestNovels = latestNovels.slice(0, 13);
-  const recommendedNovels = await getNovelResponse("rekomendasi");
-  const editorsChoice = await getNovelResponse("pilihan-editor");
 
   return (
     <main>
@@ -35,4 +39,4 @@ const page = async () => {
   );
 };
 
-export default page;
+export default Page;

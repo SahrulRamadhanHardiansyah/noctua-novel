@@ -2,7 +2,7 @@
 
 import React, { useState, FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { MenuIcon, SearchIcon, TicketPlus, XIcon } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 
@@ -14,20 +14,24 @@ const Navbar = () => {
   const { user } = useUser();
   const { openSignIn } = useClerk();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLinkClick = (path: string) => {
-    // scrollTo(0, 0);
     if (path) {
       router.push(path);
     }
     setIsOpen(false);
   };
 
-  const handleScrollClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+  const handleScrollOrNavigate = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault();
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: "smooth" });
+    if (pathname === "/") {
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      router.push(`/#${targetId}`);
     }
     setIsOpen(false);
   };
@@ -38,11 +42,12 @@ const Navbar = () => {
       router.push(`/search/${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
       setIsSearchOpen(false);
+      setIsOpen(false);
     }
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5" aria-label="Main navigation">
       <Link href="/" className="max-md:flex-1">
         <h1 className="text-xl text-gray-100 font-bold">NoctuaNovel</h1>
       </Link>
@@ -53,25 +58,35 @@ const Navbar = () => {
             isOpen ? "max-md:w-full" : "max-md:w-0"
           }`}
         >
-          <XIcon className="md:hidden absolute top-6 right-6 w-6 h-6 cursor-pointer" onClick={() => setIsOpen(!isOpen)} />
+          <button
+            className="md:hidden absolute top-6 right-6 cursor-pointer"
+            onClick={() => setIsOpen(false)}
+            aria-label="Close menu"
+          >
+            <XIcon className="w-6 h-6" />
+          </button>
 
           <a
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              if (pathname === "/") {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              } else {
+                router.push("/");
+              }
               setIsOpen(false);
             }}
           >
             Home
           </a>
-          <a href="#latest" onClick={(e) => handleScrollClick(e, "latest")}>
+          <a href="#latest" onClick={(e) => handleScrollOrNavigate(e, "latest")}>
             Latest
           </a>
-          <a href="#editors-choice" onClick={(e) => handleScrollClick(e, "editors-choice")}>
-            Editor's Choice
+          <a href="#editors-choice" onClick={(e) => handleScrollOrNavigate(e, "editors-choice")}>
+            Editor&apos;s Choice
           </a>
-          <a href="#recommendation" onClick={(e) => handleScrollClick(e, "recommendation")}>
+          <a href="#recommendation" onClick={(e) => handleScrollOrNavigate(e, "recommendation")}>
             Recommendation
           </a>
           {user && (
@@ -79,6 +94,20 @@ const Navbar = () => {
               Favorite
             </Link>
           )}
+
+          {/* Mobile Search */}
+          <form onSubmit={handleSearchSubmit} className="md:hidden w-4/5">
+            <div className="flex items-center rounded-full bg-white/10 border border-gray-300/20 px-4 py-2">
+              <SearchIcon className="w-5 h-5 text-gray-300 mr-2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search novels..."
+                className="bg-transparent text-gray-100 placeholder-gray-400 w-full focus:outline-none"
+              />
+            </div>
+          </form>
         </div>
       )}
 
@@ -89,7 +118,7 @@ const Navbar = () => {
       )}
 
       <div className="flex items-center gap-8">
-        <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="hidden md:block">
+        <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="hidden md:block" aria-label={isSearchOpen ? "Close search" : "Open search"}>
           {isSearchOpen ? <XIcon className="text-gray-100 w-6 h-6 cursor-pointer" /> : <SearchIcon className="text-gray-100 w-6 h-6 cursor-pointer" />}
         </button>
 
@@ -112,8 +141,15 @@ const Navbar = () => {
         )}
       </div>
 
-      <MenuIcon className="max-md:ml-4 md:hidden w-8 h-8 cursor-pointer" onClick={() => setIsOpen(!isOpen)} />
-    </div>
+      <button
+        className="max-md:ml-4 md:hidden cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle menu"
+        aria-expanded={isOpen}
+      >
+        <MenuIcon className="w-8 h-8" />
+      </button>
+    </nav>
   );
 };
 

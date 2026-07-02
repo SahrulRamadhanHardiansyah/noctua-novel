@@ -24,7 +24,7 @@ export const UserCommentSection = () => {
       const response = await fetch("/api/user/comments", { cache: "no-store" });
       if (response.ok) {
         const data = await response.json();
-        setComments(data);
+        setComments(data.comments ?? data);
       }
     } catch (error) {
       console.error("Failed to fetch user comments:", error);
@@ -42,15 +42,20 @@ export const UserCommentSection = () => {
     const originalComments = [...comments];
     setComments(comments.filter((c) => c.id !== commentId));
 
-    const response = await fetch(`/api/comments/${commentId}`, {
-      method: "DELETE",
-    });
+    try {
+      const response = await fetch(`/api/comments/${commentId}`, {
+        method: "DELETE",
+      });
 
-    if (response.ok) {
-      toast.success("Comment deleted successfully.");
-    } else {
+      if (response.ok) {
+        toast.success("Comment deleted successfully.");
+      } else {
+        setComments(originalComments);
+        toast.error("Failed to delete comment.");
+      }
+    } catch (error) {
       setComments(originalComments);
-      toast.error("Failed to delete comment.");
+      toast.error("Network error. Please try again.");
     }
   };
 

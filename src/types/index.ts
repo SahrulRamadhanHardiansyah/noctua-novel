@@ -1,12 +1,22 @@
 export type Novel = {
-  url: any;
-  slug: any;
-  title: any;
-  image_url: any;
-  latest_chapters: any | null;
-  rating: any | null;
-  genres: any | null;
+  url: string;
+  slug: string;
+  title: string;
+  image_url: string;
+  latest_chapters: {
+    title: string;
+    slug: string;
+    url: string;
+    chapter_short_title?: string;
+  }[] | null;
+  rating: number | null;
+  genres: string[] | null;
   synopsis: string | null;
+};
+
+export type ChapterData = {
+  chapter_title: string;
+  content: string;
 };
 
 export type NovelDetail = {

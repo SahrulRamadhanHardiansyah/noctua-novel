@@ -28,7 +28,7 @@ export const CommentSection = ({ novelSlug }: { novelSlug: string }) => {
       const response = await fetch(`/api/novels/${novelSlug}/comments`, { cache: "no-store" });
       if (response.ok) {
         const data = await response.json();
-        setComments(data);
+        setComments(data.comments ?? data);
       }
     } catch (error) {
       console.error("Failed to fetch comments:", error);
@@ -46,17 +46,25 @@ export const CommentSection = ({ novelSlug }: { novelSlug: string }) => {
     if (!newComment.trim()) return;
 
     setIsLoading(true);
-    const response = await fetch("/api/comments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ novelSlug, content: newComment }),
-    });
+    try {
+      const response = await fetch("/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ novelSlug, content: newComment }),
+      });
 
-    if (response.ok) {
-      setNewComment("");
-      await fetchComments();
+      if (response.ok) {
+        setNewComment("");
+        await fetchComments();
+      } else {
+        const data = await response.json();
+        console.error("Failed to submit comment:", data.error);
+      }
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (

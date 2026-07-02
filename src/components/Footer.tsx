@@ -1,44 +1,48 @@
 import React from "react";
+import Link from "next/link";
 
 const Footer = () => {
   return (
     <footer className="px-6 md:px-16 lg:px-36 pt-20 w-full bg-gray-950 text-gray-300">
       <div className="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-500 pb-14">
         <div className="md:max-w-96">
-          <p className="mt-6 text-sm">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-          <div className="flex items-center gap-2 mt-4">
-            <img src="/googlePlay.svg" alt="google play" className="h-9 w-auto" />
-            <img src="/appStore.svg" alt="app store" className="h-9 w-auto" />
-          </div>
+          <h2 className="text-xl font-bold text-white">NoctuaNovel</h2>
+          <p className="mt-4 text-sm">
+            Your gateway to the world of light novels. Discover, read, and enjoy thousands of translated novels from various genres.
+          </p>
         </div>
         <div className="flex-1 flex items-start md:justify-end gap-20 md:gap-40">
           <div>
-            <h2 className="font-semibold mb-5">Company</h2>
+            <h2 className="font-semibold mb-5">Navigation</h2>
             <ul className="text-sm space-y-2">
               <li>
-                <a href="#">Home</a>
+                <Link href="/" className="hover:text-white transition-colors">Home</Link>
               </li>
               <li>
-                <a href="#">About us</a>
+                <Link href="/#latest" className="hover:text-white transition-colors">Latest</Link>
               </li>
               <li>
-                <a href="#">Contact us</a>
+                <Link href="/#editors-choice" className="hover:text-white transition-colors">Editor&apos;s Choice</Link>
               </li>
               <li>
-                <a href="#">Privacy policy</a>
+                <Link href="/#recommendation" className="hover:text-white transition-colors">Recommendation</Link>
               </li>
             </ul>
           </div>
           <div>
-            <h2 className="font-semibold mb-5">Get in touch</h2>
-            <div className="text-sm space-y-2">
-              <p>+62-8774-3274-606</p>
-              <p>sahrulrmdh3@gmail.com</p>
-            </div>
+            <h2 className="font-semibold mb-5">About</h2>
+            <ul className="text-sm space-y-2">
+              <li>
+                <span className="text-gray-400">Built with Next.js</span>
+              </li>
+              <li>
+                <span className="text-gray-400">Powered by Prisma</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-      <p className="pt-4 text-center text-sm pb-5">Copyright {new Date().getFullYear()} © SahrulRamadhan. All Right Reserved.</p>
+      <p className="pt-4 text-center text-sm pb-5">Copyright {new Date().getFullYear()} © NoctuaNovel. All Rights Reserved.</p>
     </footer>
   );
 };

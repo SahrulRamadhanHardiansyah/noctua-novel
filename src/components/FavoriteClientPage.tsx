@@ -19,14 +19,19 @@ export const FavoriteClientPage = ({ initialFavoriteNovels }: FavoriteClientPage
 
     toast.info("Removed from favorites.");
 
-    const response = await fetch("/api/favorite", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ novelSlug }),
-    });
+    try {
+      const response = await fetch("/api/favorite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ novelSlug }),
+      });
 
-    if (!response.ok) {
-      toast.error("Failed to remove favorite. Please try again.");
+      if (!response.ok) {
+        toast.error("Failed to remove favorite. Please try again.");
+        setFavoriteNovels(originalNovels);
+      }
+    } catch (error) {
+      toast.error("Network error. Please try again.");
       setFavoriteNovels(originalNovels);
     }
   };
@@ -40,7 +45,7 @@ export const FavoriteClientPage = ({ initialFavoriteNovels }: FavoriteClientPage
 
             return (
               <div key={novel.slug} className="relative group">
-                <NovelCard slug={novel.slug} title={novel.title} imageUrl={novel.image_url} latestChapter={lastChapter?.chapter_short_title} latestChapterSlug={lastChapter?.slug} genres={novel.genres} />
+                <NovelCard slug={novel.slug} title={novel.title} imageUrl={novel.image_url} latestChapter={lastChapter?.chapter_short_title} latestChapterSlug={lastChapter?.slug} genres={novel.genres ?? undefined} />
                 <Button variant="destructive" size="sm" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleUnfavorite(novel.slug)}>
                   Unfavorite
                 </Button>
