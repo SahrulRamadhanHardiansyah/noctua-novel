@@ -1,25 +1,63 @@
 "use client";
 
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { MenuIcon, SearchIcon, TicketPlus, XIcon } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/nextjs";
+import { getSlugFromUrl } from "@/lib/utils/slug";
+import Image from "next/image";
 
-const Navbar = () => {
+export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [liveResults, setLiveResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const { user } = useUser();
   const { openSignIn } = useClerk();
   const router = useRouter();
   const pathname = usePathname();
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setLiveResults([]); // Hide results when clicking outside
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchLiveResults = async () => {
+      if (searchQuery.trim().length < 2) {
+        setLiveResults([]);
+        return;
+      }
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        if (res.ok) {
+          const data = await res.json();
+          // Limit to 5 results for the dropdown
+          setLiveResults(Array.isArray(data) ? data.slice(0, 5) : []);
+        }
+      } catch (error) {
+        console.error("Live search failed", error);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(fetchLiveResults, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery]);
 
   const handleLinkClick = (path: string) => {
-    if (path) {
-      router.push(path);
-    }
+    if (path) router.push(path);
     setIsOpen(false);
   };
 
@@ -27,9 +65,7 @@ const Navbar = () => {
     e.preventDefault();
     if (pathname === "/") {
       const targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: "smooth" });
-      }
+      if (targetElement) targetElement.scrollIntoView({ behavior: "smooth" });
     } else {
       router.push(`/#${targetId}`);
     }
@@ -41,6 +77,7 @@ const Navbar = () => {
     if (searchQuery.trim()) {
       router.push(`/search/${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
+      setLiveResults([]);
       setIsSearchOpen(false);
       setIsOpen(false);
     }
@@ -58,82 +95,100 @@ const Navbar = () => {
             isOpen ? "max-md:w-full" : "max-md:w-0"
           }`}
         >
-          <button
-            className="md:hidden absolute top-6 right-6 cursor-pointer"
-            onClick={() => setIsOpen(false)}
-            aria-label="Close menu"
-          >
+          <button className="md:hidden absolute top-6 right-6 cursor-pointer" onClick={() => setIsOpen(false)} aria-label="Close menu">
             <XIcon className="w-6 h-6" />
           </button>
 
-          <a
-            href="/"
-            onClick={(e) => {
-              e.preventDefault();
-              if (pathname === "/") {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              } else {
-                router.push("/");
-              }
-              setIsOpen(false);
-            }}
-          >
-            Home
-          </a>
-          <a href="#latest" onClick={(e) => handleScrollOrNavigate(e, "latest")}>
-            Latest
-          </a>
-          <a href="#editors-choice" onClick={(e) => handleScrollOrNavigate(e, "editors-choice")}>
-            Editor&apos;s Choice
-          </a>
-          <a href="#recommendation" onClick={(e) => handleScrollOrNavigate(e, "recommendation")}>
-            Recommendation
-          </a>
-          {user && (
-            <Link href="/favorite" onClick={() => handleLinkClick("/favorite")}>
-              Favorite
-            </Link>
-          )}
+          <a href="/" onClick={(e) => { e.preventDefault(); pathname === "/" ? window.scrollTo({ top: 0, behavior: "smooth" }) : router.push("/"); setIsOpen(false); }}>Home</a>
+          <a href="#latest" onClick={(e) => handleScrollOrNavigate(e, "latest")}>Latest</a>
+          <a href="#editors-choice" onClick={(e) => handleScrollOrNavigate(e, "editors-choice")}>Editor&apos;s Choice</a>
+          <a href="#recommendation" onClick={(e) => handleScrollOrNavigate(e, "recommendation")}>Recommendation</a>
+          {user && <Link href="/favorite" onClick={() => handleLinkClick("/favorite")}>Favorite</Link>}
 
           {/* Mobile Search */}
-          <form onSubmit={handleSearchSubmit} className="md:hidden w-4/5">
-            <div className="flex items-center rounded-full bg-white/10 border border-gray-300/20 px-4 py-2">
-              <SearchIcon className="w-5 h-5 text-gray-300 mr-2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search novels..."
-                className="bg-transparent text-gray-100 placeholder-gray-400 w-full focus:outline-none"
-              />
-            </div>
-          </form>
+          <div className="md:hidden w-4/5 relative" ref={searchRef}>
+            <form onSubmit={handleSearchSubmit}>
+              <div className="flex items-center rounded-full bg-white/10 border border-gray-300/20 px-4 py-2">
+                <SearchIcon className="w-5 h-5 text-gray-300 mr-2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search novels..."
+                  className="bg-transparent text-gray-100 placeholder-gray-400 w-full focus:outline-none"
+                />
+              </div>
+            </form>
+            {/* Mobile Live Results */}
+            {liveResults.length > 0 && (
+              <div className="absolute top-full mt-2 w-full bg-gray-900 border border-gray-700 rounded-lg overflow-hidden shadow-xl z-50">
+                {liveResults.map((novel) => {
+                  const slug = getSlugFromUrl(novel.url);
+                  return (
+                    <Link key={slug} href={`/novel/${slug}`} onClick={() => { setLiveResults([]); setIsOpen(false); setSearchQuery(""); }} className="flex items-center gap-3 p-3 hover:bg-gray-800 transition">
+                      <div className="w-10 h-14 relative flex-shrink-0 bg-gray-800">
+                        {novel.image_url && <Image src={`/api/proxy-image?url=${encodeURIComponent(novel.image_url)}`} alt="" fill unoptimized className="object-cover rounded-sm" />}
+                      </div>
+                      <div className="flex-col min-w-0">
+                        <p className="text-sm font-medium text-white truncate w-full">{novel.title}</p>
+                        <p className="text-xs text-gray-400 truncate w-full">{novel.genres?.join(", ")}</p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
+      {/* Desktop Search */}
       {isSearchOpen && (
-        <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-grow justify-center items-center md:px-2 py-1 max-w-lg md:rounded-full backdrop-blur bg-white/10 border border-gray-300/20">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search novels..." className="bg-transparent text-gray-100 placeholder-gray-200 w-full px-4 py-2 focus:outline-none" autoFocus />
-        </form>
+        <div className="hidden md:flex flex-grow justify-center relative" ref={searchRef}>
+          <form onSubmit={handleSearchSubmit} className="flex items-center px-2 py-1 w-full max-w-lg rounded-full backdrop-blur bg-white/10 border border-gray-300/20 relative z-50">
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search novels..." className="bg-transparent text-gray-100 placeholder-gray-200 w-full px-4 py-2 focus:outline-none" autoFocus />
+          </form>
+
+          {/* Desktop Live Results */}
+          {(liveResults.length > 0 || isSearching) && (
+            <div className="absolute top-full mt-4 w-full max-w-lg bg-gray-950 border border-gray-700 rounded-xl overflow-hidden shadow-2xl z-40">
+              {isSearching && liveResults.length === 0 ? (
+                <div className="p-4 text-center text-sm text-gray-400">Searching...</div>
+              ) : (
+                <>
+                  {liveResults.map((novel) => {
+                    const slug = getSlugFromUrl(novel.url);
+                    return (
+                      <Link key={slug} href={`/novel/${slug}`} onClick={() => { setLiveResults([]); setIsSearchOpen(false); setSearchQuery(""); }} className="flex items-center gap-4 p-3 hover:bg-gray-800 transition">
+                        <div className="w-12 h-16 relative flex-shrink-0 bg-gray-800 rounded shadow-sm overflow-hidden">
+                          {novel.image_url && <Image src={`/api/proxy-image?url=${encodeURIComponent(novel.image_url)}`} alt="" fill unoptimized className="object-cover" />}
+                        </div>
+                        <div className="flex-col min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-white truncate w-full">{novel.title}</p>
+                          {novel.genres && <p className="text-xs text-gray-400 truncate w-full mt-1">{novel.genres.slice(0, 3).join(", ")}</p>}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                  <button onClick={handleSearchSubmit} className="w-full p-3 text-sm text-center text-primary font-medium hover:bg-gray-800 bg-gray-900/50 transition">
+                    View all results
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       )}
 
       <div className="flex items-center gap-8">
-        <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="hidden md:block" aria-label={isSearchOpen ? "Close search" : "Open search"}>
+        <button onClick={() => { setIsSearchOpen(!isSearchOpen); setLiveResults([]); setSearchQuery(""); }} className="hidden md:block" aria-label={isSearchOpen ? "Close search" : "Open search"}>
           {isSearchOpen ? <XIcon className="text-gray-100 w-6 h-6 cursor-pointer" /> : <SearchIcon className="text-gray-100 w-6 h-6 cursor-pointer" />}
         </button>
 
         {!user ? (
-          <button onClick={() => openSignIn()} className="px-4 py-1 sm:px-7 sm:py-2 bg-gray-100 hover:bg-gray-400 text-black transition rounded-full font-medium cursor-pointer">
-            Login
-          </button>
+          <button onClick={() => openSignIn()} className="px-4 py-1 sm:px-7 sm:py-2 bg-gray-100 hover:bg-gray-400 text-black transition rounded-full font-medium cursor-pointer">Login</button>
         ) : (
-          <UserButton
-            appearance={{
-              elements: {
-                userButtonAvatarBox: { width: "2.5rem", height: "2.5rem" },
-              },
-            }}
-          >
+          <UserButton appearance={{ elements: { userButtonAvatarBox: { width: "2.5rem", height: "2.5rem" } } }}>
             <UserButton.MenuItems>
               <UserButton.Action label="My Favorite" labelIcon={<TicketPlus width={15} />} onClick={() => handleLinkClick("/favorite")} />
             </UserButton.MenuItems>
@@ -141,16 +196,9 @@ const Navbar = () => {
         )}
       </div>
 
-      <button
-        className="max-md:ml-4 md:hidden cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle menu"
-        aria-expanded={isOpen}
-      >
+      <button className="max-md:ml-4 md:hidden cursor-pointer" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu" aria-expanded={isOpen}>
         <MenuIcon className="w-8 h-8" />
       </button>
     </nav>
   );
-};
-
-export default Navbar;
+}

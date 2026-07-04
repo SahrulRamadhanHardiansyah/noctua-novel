@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, BookOpen, Layers, User } from "lucide-react";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { CommentSection } from "@/components/CommentSection";
+import { ChapterList } from "@/components/ChapterList";
 
 export const NovelDetailClient = async ({ slug }: { slug: string }) => {
   const novel: NovelDetail = await getNovelResponse(`novel/${slug}`);
@@ -74,20 +75,7 @@ export const NovelDetailClient = async ({ slug }: { slug: string }) => {
       <section className="pb-24 -mt-4">
         <div className="container mx-auto px-6 md:px-16 lg:px-36">
           <h2 className="text-3xl font-bold mb-6">Chapter List</h2>
-          <div className="bg-gray-900/50 rounded-lg max-h-[60vh] overflow-y-auto scrollbar-hide">
-            <ul className="divide-y divide-gray-700/50">
-              {novel.chapters?.map((chapter) => (
-                <li key={chapter.slug}>
-                  <Link href={`/chapter/${chapter.slug}`} className="flex justify-between items-center p-4 hover:bg-gray-800/60 transition-colors duration-200">
-                    <div className="flex items-center gap-3">
-                      <BookOpen className="w-5 h-5 text-gray-100" /> <span className="font-medium">{chapter.chapter_full_title}</span>
-                    </div>
-                    <span className="text-sm text-gray-400">{chapter.release_date}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ChapterList chapters={novel.chapters || []} />
 
           <div className="mt-16">
             <CommentSection novelSlug={slug} />
