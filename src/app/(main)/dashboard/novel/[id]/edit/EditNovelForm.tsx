@@ -7,14 +7,14 @@ import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export default function CreateNovelPage() {
+export default function EditNovelForm({ novel }: { novel: any }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: "",
-    synopsis: "",
-    imageUrl: "",
-    genres: "",
+    title: novel.title,
+    synopsis: novel.synopsis || "",
+    imageUrl: novel.imageUrl || "",
+    genres: novel.genres.join(", "),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,22 +23,22 @@ export default function CreateNovelPage() {
 
     try {
       const response = await fetch("/api/user-novel", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          id: novel.id,
           ...formData,
-          // Convert comma-separated string to array
-          genres: formData.genres.split(",").map(g => g.trim()).filter(Boolean),
+          genres: formData.genres.split(",").map((g: string) => g.trim()).filter(Boolean),
         }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Failed to create novel");
+        throw new Error(error.error || "Failed to update novel");
       }
 
-      toast.success("Novel created successfully!");
-      router.push("/dashboard");
+      toast.success("Novel updated successfully!");
+      router.push(`/dashboard/novel/${novel.id}`);
       router.refresh();
     } catch (error: any) {
       toast.error(error.message);
@@ -50,14 +50,14 @@ export default function CreateNovelPage() {
   return (
     <div className="bg-gray-950 min-h-screen text-gray-300 pt-24 pb-16">
       <div className="container mx-auto px-6 md:px-16 lg:px-36">
-        <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-white mb-8 transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
+        <Link href={`/dashboard/novel/${novel.id}`} className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-white mb-8 transition-colors">
+          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Novel Details
         </Link>
 
         <div className="max-w-3xl mx-auto bg-gray-900 shadow-xl shadow-black/50 p-8 md:p-12 rounded-2xl border border-gray-800">
           <div className="mb-8 border-b border-gray-800 pb-6">
-            <h1 className="text-3xl font-bold text-white mb-2">Create New Novel</h1>
-            <p className="text-gray-400">Fill in the details below to start your new masterpiece.</p>
+            <h1 className="text-3xl font-bold text-white mb-2">Edit Novel</h1>
+            <p className="text-gray-400">Update the details of "{novel.title}".</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -70,7 +70,6 @@ export default function CreateNovelPage() {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="w-full bg-gray-950 border border-gray-800 rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                  placeholder="e.g. My Awesome Light Novel"
                 />
               </div>
 
@@ -81,9 +80,7 @@ export default function CreateNovelPage() {
                   value={formData.imageUrl}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                   className="w-full bg-gray-950 border border-gray-800 rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                  placeholder="https://example.com/cover.jpg"
                 />
-                <p className="text-xs text-gray-500 mt-2">Provide a direct link to an image. This will be used as the novel cover.</p>
               </div>
 
               <div>
@@ -104,14 +101,18 @@ export default function CreateNovelPage() {
                   value={formData.synopsis}
                   onChange={(e) => setFormData({ ...formData, synopsis: e.target.value })}
                   className="w-full bg-gray-950 border border-gray-800 rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary resize-y transition-all leading-relaxed"
-                  placeholder="Write a catchy synopsis to attract readers..."
                 />
               </div>
             </div>
 
-            <div className="pt-6 border-t border-gray-800">
+            <div className="pt-6 border-t border-gray-800 flex justify-end gap-4">
+              <Link href={`/dashboard/novel/${novel.id}`}>
+                <Button variant="outline" type="button" className="w-full md:w-auto text-base">
+                  Cancel
+                </Button>
+              </Link>
               <Button type="submit" size="lg" className="w-full md:w-auto md:min-w-[200px] text-base font-semibold" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Publish Novel"}
+                {isLoading ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>
