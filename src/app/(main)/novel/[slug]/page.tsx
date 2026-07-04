@@ -4,22 +4,44 @@ import { getNovelResponse } from "@/lib/api-libs";
 import { NovelDetail } from "@/types";
 import type { Metadata } from "next";
 
+import prisma from "@/lib/prisma";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const isCommunity = slug.startsWith("community-");
 
   try {
-    const novel: NovelDetail = await getNovelResponse(`novel/${slug}`);
+    let novelTitle = "Novel";
+    let novelSynopsis = "";
+    let novelImage = "";
+
+    if (isCommunity) {
+      const dbNovel = await prisma.userNovel.findUnique({
+        where: { slug: slug.replace("community-", "") },
+      });
+      if (dbNovel) {
+        novelTitle = dbNovel.title;
+        novelSynopsis = dbNovel.synopsis || "";
+        novelImage = dbNovel.imageUrl || "";
+      }
+    } else {
+      const novel: NovelDetail = await getNovelResponse(`novel/${slug}`);
+      novelTitle = novel.title;
+      novelSynopsis = novel.synopsis || "";
+      novelImage = novel.image_url || "";
+    }
+
     return {
-      title: `${novel.title} | NoctuaNovel`,
-      description: novel.synopsis?.slice(0, 160) ?? `Read ${novel.title} on NoctuaNovel`,
+      title: `${novelTitle} | NoctuaNovel`,
+      description: novelSynopsis.slice(0, 160) || `Read ${novelTitle} on NoctuaNovel`,
       openGraph: {
-        title: novel.title,
-        description: novel.synopsis?.slice(0, 160) ?? `Read ${novel.title} on NoctuaNovel`,
-        images: novel.image_url ? [{ url: novel.image_url }] : [],
+        title: novelTitle,
+        description: novelSynopsis.slice(0, 160) || `Read ${novelTitle} on NoctuaNovel`,
+        images: novelImage ? [{ url: novelImage }] : [],
       },
     };
   } catch {

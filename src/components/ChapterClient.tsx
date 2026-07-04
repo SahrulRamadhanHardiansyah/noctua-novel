@@ -45,11 +45,41 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
     if (direction === "decrease" && fontSizeIndex > 0) setFontSizeIndex(fontSizeIndex - 1);
   };
 
-  const formattedContent = content.split("\n").map((p, i) => (
-    <p key={i} className="mb-6">
-      {p}
-    </p>
-  ));
+  const formattedContent = content.split("\n").map((p, i) => {
+    // Ponytail: Simple regex for Markdown images instead of a full MD parser
+    // Format: ![alt text](image_url)
+    const imgRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+
+    if (imgRegex.test(p)) {
+      // Split the paragraph by images and render them interchangeably
+      const parts = p.split(imgRegex);
+      if (parts.length > 1) {
+        return (
+          <p key={i} className="mb-6 flex flex-col items-center gap-4">
+            {parts.map((part, idx) => {
+              // The regex split returns: [text, alt1, url1, text, alt2, url2, ...]
+              if (idx % 3 === 0) return part ? <span key={idx}>{part}</span> : null;
+              if (idx % 3 === 2) {
+                const url = part;
+                const alt = parts[idx - 1] || "Chapter image";
+                return (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={idx} src={`/api/proxy-image?url=${encodeURIComponent(url)}`} alt={alt} className="max-w-full rounded-md shadow-md" loading="lazy" />
+                );
+              }
+              return null;
+            })}
+          </p>
+        );
+      }
+    }
+
+    return (
+      <p key={i} className="mb-6">
+        {p}
+      </p>
+    );
+  });
 
   return (
     <div className="bg-gray-950 min-h-screen text-gray-300 pt-12">

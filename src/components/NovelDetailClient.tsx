@@ -9,8 +9,35 @@ import { FavoriteButton } from "@/components/FavoriteButton";
 import { CommentSection } from "@/components/CommentSection";
 import { ChapterList } from "@/components/ChapterList";
 
+import prisma from "@/lib/prisma";
+
 export const NovelDetailClient = async ({ slug }: { slug: string }) => {
-  const novel: NovelDetail = await getNovelResponse(`novel/${slug}`);
+  let novel: NovelDetail | null = null;
+  const isCommunity = slug.startsWith("community-");
+
+  if (isCommunity) {
+    const dbNovel = await prisma.userNovel.findUnique({
+      where: { slug: slug.replace("community-", "") },
+      include: { chapters: { orderBy: { orderIndex: "desc" } } },
+    });
+    if (dbNovel) {
+      novel = {
+        title: dbNovel.title,
+        image_url: dbNovel.imageUrl || "",
+        synopsis: dbNovel.synopsis || "",
+        rating: 5,
+        genres: dbNovel.genres,
+        metadata: { author: dbNovel.authorName, status: dbNovel.status },
+        chapters: dbNovel.chapters.map(c => ({
+          slug: `community-${c.slug}`,
+          chapter_full_title: c.title,
+          release_date: new Date(c.createdAt).toLocaleDateString()
+        }))
+      };
+    }
+  } else {
+    novel = await getNovelResponse(`novel/${slug}`);
+  }
 
   if (!novel) {
     return (

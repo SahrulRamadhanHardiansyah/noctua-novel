@@ -38,3 +38,48 @@ model Comment {
   @@index([novelSlug])
   @@index([userId])
 }
+
+model UserNovel {
+  id          String   @id @default(cuid())
+  userId      String   // Clerk user ID
+  authorName  String   // Derived from Clerk for display
+  slug        String   @unique
+  title       String
+  synopsis    String?  @db.Text
+  imageUrl    String?
+  genres      String[]
+  status      String   @default("Ongoing")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  chapters    UserChapter[]
+
+  @@index([userId])
+}
+
+model UserChapter {
+  id             String    @id @default(cuid())
+  novelId        String
+  slug           String    @unique
+  title          String
+  content        String    @db.Text
+  orderIndex     Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  novel          UserNovel @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  @@index([novelId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   // Target user ID
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  link      String?  // Optional URL to navigate to
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
