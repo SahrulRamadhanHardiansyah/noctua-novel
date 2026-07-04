@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react";
+import { PlusCircle, ArrowLeft, Trash2, Book, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
