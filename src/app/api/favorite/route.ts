@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 
-const SLUG_PATTERN = /^[a-zA-Z0-9_]+(?:-[a-zA-Z0-9_]+)*$/;
-
 export async function GET(request: Request) {
   try {
     const { userId } = await auth();
@@ -14,10 +12,6 @@ export async function GET(request: Request) {
     const novelSlug = searchParams.get("novelSlug");
     if (!novelSlug) {
       return NextResponse.json({ error: "novelSlug query parameter is required" }, { status: 400 });
-    }
-
-    if (!SLUG_PATTERN.test(novelSlug)) {
-      return NextResponse.json({ error: "Invalid novelSlug format" }, { status: 400 });
     }
 
     const favorite = await prisma.favorite.findFirst({
@@ -42,10 +36,6 @@ export async function POST(request: Request) {
 
     if (!novelSlug || typeof novelSlug !== "string") {
       return NextResponse.json({ error: "novelSlug is required" }, { status: 400 });
-    }
-
-    if (!SLUG_PATTERN.test(novelSlug)) {
-      return NextResponse.json({ error: "Invalid novelSlug format" }, { status: 400 });
     }
 
     const existingFavorite = await prisma.favorite.findFirst({

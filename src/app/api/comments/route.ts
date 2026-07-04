@@ -3,7 +3,6 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 
 const MAX_COMMENT_LENGTH = 2000;
-const SLUG_PATTERN = /^[a-zA-Z0-9_]+(?:-[a-zA-Z0-9_]+)*$/;
 
 export async function POST(request: Request) {
   try {
@@ -20,10 +19,6 @@ export async function POST(request: Request) {
     // Validate novelSlug
     if (!novelSlug || typeof novelSlug !== "string") {
       return NextResponse.json({ error: "novelSlug is required" }, { status: 400 });
-    }
-
-    if (!SLUG_PATTERN.test(novelSlug)) {
-      return NextResponse.json({ error: "Invalid novelSlug format" }, { status: 400 });
     }
 
     // Validate content
