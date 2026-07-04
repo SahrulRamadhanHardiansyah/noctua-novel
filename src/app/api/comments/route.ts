@@ -3,7 +3,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 
 const MAX_COMMENT_LENGTH = 2000;
-const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const SLUG_PATTERN = /^[a-zA-Z0-9_]+(?:-[a-zA-Z0-9_]+)*$/;
 
 export async function POST(request: Request) {
   try {
