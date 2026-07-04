@@ -23,13 +23,13 @@ export const NovelDetailClient = async ({ slug }: { slug: string }) => {
     <div className="bg-black text-white min-h-screen">
       <section className="relative pt-40 pb-16">
         <div className="absolute inset-0">
-          <Image src={novel.image_url} alt={`${novel.title} background`} fill className="object-cover opacity-50 blur-2xl" />
+          <Image src={`/api/proxy-image?url=${encodeURIComponent(novel.image_url)}`} alt={`${novel.title} background`} fill unoptimized={true} className="object-cover opacity-50 blur-2xl" />
           <div className="absolute inset-0" />
         </div>
 
         <div className="relative container mx-auto px-6 md:px-16 lg:px-36 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start">
           <div className="w-48 md:w-1/4 flex-shrink-0">
-            <Image src={novel.image_url} alt={novel.title} width={500} height={700} className="rounded-lg w-full aspect-[3/4] object-cover shadow-[0_8px_30px_rgba(0,0,0,0.5)]" priority />
+            <Image src={`/api/proxy-image?url=${encodeURIComponent(novel.image_url)}`} alt={novel.title} width={500} height={700} unoptimized={true} className="rounded-lg w-full aspect-[3/4] object-cover shadow-[0_8px_30px_rgba(0,0,0,0.5)]" priority />
           </div>
           <div className="w-full md:w-3/4 flex flex-col gap-4 text-center md:text-left">
             <h1 className="text-4xl md:text-5xl font-bold text-white">{novel.title}</h1>

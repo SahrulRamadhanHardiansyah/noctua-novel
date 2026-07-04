@@ -18,7 +18,7 @@ const NovelCard = ({ imageUrl, title, slug, genres, latestChapter, latestChapter
   return (
     <Link href={`/novel/${slug}`} className="group block">
       <div className="overflow-hidden rounded-md">
-        <Image src={imageUrl} alt={title} width={500} height={700} className="aspect-[3/4] w-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out" />
+        <Image src={`/api/proxy-image?url=${encodeURIComponent(imageUrl)}`} alt={title} width={500} height={700} unoptimized={true} className="aspect-[3/4] w-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out" />
       </div>
       <div className="mt-3">
         {genres && genres.length > 0 && (
