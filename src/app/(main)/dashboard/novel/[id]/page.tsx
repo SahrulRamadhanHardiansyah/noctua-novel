@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { PlusCircle, ArrowLeft, Trash2, Book, Edit } from "lucide-react";
+import { PlusCircle, ArrowLeft, Book, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
@@ -109,6 +109,9 @@ export default async function ManageNovelPage({ params }: { params: Promise<{ id
                   </div>
                   <div className="text-sm text-gray-500 flex items-center gap-6">
                     <span className="hidden md:inline-block">{new Date(chapter.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                    <Link href={`/dashboard/novel/${novel.id}/chapter/${chapter.id}/edit`} className="text-gray-400 hover:text-white font-medium transition-colors px-3 py-1.5 hover:bg-gray-700 rounded-full">
+                      <Edit className="w-4 h-4" />
+                    </Link>
                     <Link href={`/chapter/community-${chapter.slug}`} target="_blank" className="text-primary hover:text-white font-medium hover:underline transition-colors px-4 py-1.5 bg-primary/10 rounded-full">
                       Read
                     </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Settings, Minus, Plus, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
@@ -23,9 +23,25 @@ type ChapterClientProps = {
 const fontSizes = ["text-base", "text-lg", "text-xl", "text-2xl"];
 
 const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChapter }: ChapterClientProps) => {
-  const [fontSizeIndex, setFontSizeIndex] = useState(1);
+  const scrollKey = `scroll_${novelSlug}_${chapterTitle}`;
+  const fontKey = `fontSize_${novelSlug}`;
+
+  const [fontSizeIndex, setFontSizeIndex] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    const saved = localStorage.getItem(fontKey);
+    return saved ? Number(saved) : 1;
+  });
   const [readingProgress, setReadingProgress] = useState(0);
   const router = useRouter();
+
+  // Restore scroll position on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(scrollKey);
+    if (saved) {
+      const timer = setTimeout(() => window.scrollTo(0, Number(saved)), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [scrollKey]);
 
   const handleScroll = useCallback(() => {
     const scrollTop = window.scrollY;
@@ -33,20 +49,35 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
     if (docHeight > 0) {
       setReadingProgress(Math.min(100, (scrollTop / docHeight) * 100));
     }
-  }, []);
+    // Save scroll position
+    localStorage.setItem(scrollKey, String(scrollTop));
+  }, [scrollKey]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft" && prevChapter) router.push(`/chapter/${prevChapter.slug}`);
+      if (e.key === "ArrowRight" && nextChapter) router.push(`/chapter/${nextChapter.slug}`);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [prevChapter, nextChapter, router]);
+
   const handleFontSizeChange = (direction: "increase" | "decrease") => {
-    if (direction === "increase" && fontSizeIndex < fontSizes.length - 1) setFontSizeIndex(fontSizeIndex + 1);
-    if (direction === "decrease" && fontSizeIndex > 0) setFontSizeIndex(fontSizeIndex - 1);
+    setFontSizeIndex((prev) => {
+      const next = direction === "increase" ? Math.min(prev + 1, fontSizes.length - 1) : Math.max(prev - 1, 0);
+      localStorage.setItem(fontKey, String(next));
+      return next;
+    });
   };
 
-  const formattedContent = content.split("\n").map((p, i) => {
-    // Ponytail: Simple regex for Markdown images instead of a full MD parser
+  const formattedContent = useMemo(() => content.split("\n").map((p, i) => {
+    // ponytail: Simple regex for Markdown images instead of a full MD parser
     // Format: ![alt text](image_url)
     const imgRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
 
@@ -63,7 +94,7 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
                 const url = part;
                 const alt = parts[idx - 1] || "Chapter image";
                 return (
-                  // eslint-disable-next-line @next/next/no-img-element
+                  /* ponytail: img tag intentional — user-generated markdown URLs, next/image needs known domains */
                   <img key={idx} src={`/api/proxy-image?url=${encodeURIComponent(url)}`} alt={alt} className="max-w-full rounded-md shadow-md" loading="lazy" />
                 );
               }
@@ -79,7 +110,7 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
         {p}
       </p>
     );
-  });
+  }), [content]);
 
   return (
     <div className="bg-gray-950 min-h-screen text-gray-300 pt-12">

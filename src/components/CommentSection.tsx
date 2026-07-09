@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -60,8 +61,8 @@ export const CommentSection = ({ novelSlug }: { novelSlug: string }) => {
         const data = await response.json();
         console.error("Failed to submit comment:", data.error);
       }
-    } catch (error) {
-      console.error("Error submitting comment:", error);
+    } catch {
+      toast.error("Failed to submit comment");
     } finally {
       setIsLoading(false);
     }

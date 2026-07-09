@@ -1,18 +1,19 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { getNovelResponse } from "@/lib/api-libs";
 import { NovelDetail } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { Star, BookOpen, Layers, User } from "lucide-react";
+import { Star, Layers, User } from "lucide-react";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { CommentSection } from "@/components/CommentSection";
 import { ChapterList } from "@/components/ChapterList";
+import ReviewSection from "@/components/ReviewSection";
 
 import prisma from "@/lib/prisma";
 
 export const NovelDetailClient = async ({ slug }: { slug: string }) => {
   let novel: NovelDetail | null = null;
+  let communityNovelId: string | null = null;
   const isCommunity = slug.startsWith("community-");
 
   if (isCommunity) {
@@ -21,6 +22,7 @@ export const NovelDetailClient = async ({ slug }: { slug: string }) => {
       include: { chapters: { orderBy: { orderIndex: "desc" } } },
     });
     if (dbNovel) {
+      communityNovelId = dbNovel.id;
       novel = {
         title: dbNovel.title,
         image_url: dbNovel.imageUrl || "",
@@ -107,6 +109,12 @@ export const NovelDetailClient = async ({ slug }: { slug: string }) => {
         <div className="container mx-auto px-6 md:px-16 lg:px-36">
           <h2 className="text-3xl font-bold mb-6">Chapter List</h2>
           <ChapterList chapters={novel.chapters || []} />
+
+          {communityNovelId && (
+            <div className="mt-16">
+              <ReviewSection novelId={communityNovelId} />
+            </div>
+          )}
 
           <div className="mt-16">
             <CommentSection novelSlug={slug} />
