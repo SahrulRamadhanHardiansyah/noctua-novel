@@ -3,10 +3,12 @@
 import React, { useState, FormEvent, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { MenuIcon, SearchIcon, TicketPlus, XIcon, Bell, BookOpen } from "lucide-react";
+import { MenuIcon, SearchIcon, TicketPlus, XIcon, BookOpen, Coins, PenTool } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 import { getSlugFromUrl } from "@/lib/utils/slug";
 import Image from "next/image";
+import NotificationBell from "@/components/NotificationBell";
+import CoinBalance from "@/components/CoinBalance";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,50 +16,16 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [liveResults, setLiveResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-
   const { user } = useUser();
   const { openSignIn } = useClerk();
   const router = useRouter();
   const pathname = usePathname();
   const searchRef = useRef<HTMLDivElement>(null);
-  const notifRef = useRef<HTMLDivElement>(null);
-
-  // Polling for notifications every 30 seconds
-  useEffect(() => {
-    if (!user) return;
-    const fetchNotifications = async () => {
-      try {
-        const res = await fetch("/api/notifications");
-        if (res.ok) setNotifications(await res.json());
-      } catch (err) {}
-    };
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
-  }, [user]);
-
-  const markNotificationAsRead = async (id?: string) => {
-    try {
-      await fetch("/api/notifications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-      setNotifications(prev =>
-        id ? prev.map(n => n.id === id ? { ...n, isRead: true } : n) : prev.map(n => ({ ...n, isRead: true }))
-      );
-    } catch (err) {}
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setLiveResults([]);
-      }
-      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
-        setIsNotificationsOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -137,6 +105,12 @@ export default function Navbar() {
           <a href="#editors-choice" onClick={(e) => handleScrollOrNavigate(e, "editors-choice")}>Editor&apos;s Choice</a>
           <a href="#recommendation" onClick={(e) => handleScrollOrNavigate(e, "recommendation")}>Recommendation</a>
           {user && <Link href="/favorite" onClick={() => handleLinkClick("/favorite")}>Favorite</Link>}
+          {user && (
+            <Link href="/dashboard" onClick={() => setIsOpen(false)} className="md:hidden flex items-center gap-2">
+              <PenTool className="w-5 h-5" />
+              Author Studio
+            </Link>
+          )}
 
           {/* Mobile Search */}
           <div className="md:hidden w-4/5 relative" ref={searchRef}>
@@ -222,44 +196,14 @@ export default function Navbar() {
           <button onClick={() => openSignIn()} className="px-4 py-1 sm:px-7 sm:py-2 bg-gray-100 hover:bg-gray-400 text-black transition rounded-full font-medium cursor-pointer">Login</button>
         ) : (
           <div className="flex items-center gap-4">
-            <div className="relative" ref={notifRef}>
-              <button onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} className="relative text-gray-300 hover:text-white transition">
-                <Bell className="w-6 h-6" />
-                {notifications.filter(n => !n.isRead).length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                    {notifications.filter(n => !n.isRead).length}
-                  </span>
-                )}
-              </button>
-              {isNotificationsOpen && (
-                <div className="absolute right-0 mt-4 w-80 bg-gray-950 border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden">
-                  <div className="flex justify-between items-center p-3 bg-gray-900 border-b border-gray-800">
-                    <h3 className="font-semibold text-white">Notifications</h3>
-                    <button onClick={() => markNotificationAsRead()} className="text-xs text-primary hover:underline">Mark all as read</button>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <div className="p-4 text-center text-gray-500 text-sm">No notifications</div>
-                    ) : (
-                      <ul className="divide-y divide-gray-800">
-                        {notifications.map(n => (
-                          <li key={n.id} className={`p-3 hover:bg-gray-800 transition cursor-pointer ${!n.isRead ? "bg-gray-900/50" : ""}`} onClick={() => { markNotificationAsRead(n.id); if (n.link) router.push(n.link); setIsNotificationsOpen(false); }}>
-                            <p className="text-sm font-medium text-white mb-1">{n.title}</p>
-                            <p className="text-xs text-gray-400 line-clamp-2">{n.message}</p>
-                            <p className="text-[10px] text-gray-600 mt-2">{new Date(n.createdAt).toLocaleDateString()}</p>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+            <CoinBalance />
+            <NotificationBell />
 
             <UserButton appearance={{ elements: { userButtonAvatarBox: { width: "2.5rem", height: "2.5rem" } } }}>
               <UserButton.MenuItems>
                 <UserButton.Action label="My Dashboard" labelIcon={<BookOpen className="w-4 h-4" />} onClick={() => handleLinkClick("/dashboard")} />
                 <UserButton.Action label="My Favorite" labelIcon={<TicketPlus width={15} />} onClick={() => handleLinkClick("/favorite")} />
+                <UserButton.Action label="Coins" labelIcon={<Coins className="w-4 h-4" />} onClick={() => handleLinkClick("/coins")} />
               </UserButton.MenuItems>
             </UserButton>
           </div>

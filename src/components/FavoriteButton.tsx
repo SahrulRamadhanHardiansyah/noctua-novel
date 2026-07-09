@@ -32,8 +32,8 @@ export const FavoriteButton = ({ novelSlug }: FavoriteButtonProps) => {
           const data = await response.json();
           setIsFavorited(data.isFavorited);
         }
-      } catch (error) {
-        console.error("Error fetching favorite status:", error);
+      } catch {
+        // silent on initial load
       } finally {
         setIsLoading(false);
       }

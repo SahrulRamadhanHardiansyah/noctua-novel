@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
-
-const slugify = (text: string) =>
-  text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+import { slugify } from "@/lib/utils/slug";
 
 export async function POST(request: Request) {
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { novelId, title, content, orderIndex } = await request.json();
+    const { novelId, title, content, orderIndex, isDraft, isLocked, coinPrice, scheduledAt } = await request.json();
 
     if (!novelId || !title || !content) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -30,7 +28,12 @@ export async function POST(request: Request) {
         title: title.trim(),
         content: content.trim(),
         orderIndex: orderIndex || 0,
-        slug
+        slug,
+        wordCount: content.trim().split(/\s+/).filter(Boolean).length,
+        isDraft: isDraft ?? false,
+        isLocked: isLocked ?? false,
+        coinPrice: coinPrice ?? 0,
+        scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
       }
     });
 
