@@ -11,6 +11,7 @@ import {
   Coins,
   Edit,
   BarChart3,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -68,6 +69,11 @@ export default async function DashboardPage() {
             <Link href="/dashboard/analytics">
               <Button variant="secondary" className="gap-2">
                 <BarChart3 className="w-4 h-4" /> Analytics
+              </Button>
+            </Link>
+            <Link href="/dashboard/customize">
+              <Button variant="secondary" className="gap-2">
+                <Palette className="w-4 h-4" /> Customize
               </Button>
             </Link>
             <Link href="/dashboard/create-novel">

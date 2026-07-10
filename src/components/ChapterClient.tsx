@@ -172,13 +172,27 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
     }
   }, [chapterTitle, content, novelSlug, chapterSlug]);
 
-  // Trigger achievement check on chapter read
+  // Trigger achievement check + XP on chapter read
   useEffect(() => {
     if (!chapterSlug) return;
+    // Achievement check
     fetch("/api/achievements", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ trigger: "chapter_read", value: 1 }),
+    }).catch(() => {});
+    // XP reward
+    fetch("/api/gamification/xp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trigger: "chapter_read" }),
+    }).then(r => r.ok ? r.json() : null).then(data => {
+      if (data?.leveledUp) {
+        toast.success(`🎉 Level Up! You are now Level ${data.newLevel}!`, { duration: 5000 });
+        if (data.newBorders?.length > 0) {
+          toast.info(`New border unlocked: ${data.newBorders.join(", ")}!`, { duration: 4000 });
+        }
+      }
     }).catch(() => {});
   }, [chapterSlug]);
 
