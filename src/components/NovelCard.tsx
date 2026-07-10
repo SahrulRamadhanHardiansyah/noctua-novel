@@ -17,7 +17,7 @@ type NovelCardProps = {
 const NovelCard = ({ imageUrl, title, slug, genres, latestChapter, latestChapterSlug }: NovelCardProps) => {
   return (
     <Link href={`/novel/${slug}`} className="group block">
-      <div className="overflow-hidden rounded-md">
+      <div className="overflow-hidden rounded-xl ring-1 ring-white/[0.06]">
         <Image src={`/api/proxy-image?url=${encodeURIComponent(imageUrl)}`} alt={title} width={500} height={700} unoptimized={true} className="aspect-[3/4] w-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out" />
       </div>
       <div className="mt-3">
@@ -31,10 +31,10 @@ const NovelCard = ({ imageUrl, title, slug, genres, latestChapter, latestChapter
           </div>
         )}
 
-        <h3 className="font-semibold text-base truncate group-hover:text-gray-400 transition-colors">{title}</h3>
+        <h3 className="font-semibold text-base truncate text-white group-hover:text-violet-400 transition-colors">{title}</h3>
 
         {latestChapter && latestChapterSlug && (
-          <Link href={`/chapter/${latestChapterSlug}`} onClick={(e) => e.stopPropagation()} className="text-sm text-gray-400 mt-1 hover:text-white hover:underline">
+          <Link href={`/chapter/${latestChapterSlug}`} onClick={(e) => e.stopPropagation()} className="text-sm text-zinc-500 mt-1 hover:text-violet-400 hover:underline">
             {latestChapter}
           </Link>
         )}

@@ -19,9 +19,9 @@ export default async function CreateChapterPage({ params }: { params: Promise<{ 
   if (!novel) redirect("/dashboard");
 
   return (
-    <div className="bg-gray-950 text-white min-h-screen pt-24 pb-16">
+    <div className="bg-[#09090b] text-white min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-6 md:px-16 lg:px-36">
-        <Link href={`/dashboard/novel/${novel.id}`} className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-8 transition-colors">
+        <Link href={`/dashboard/novel/${novel.id}`} className="inline-flex items-center text-sm text-zinc-500 hover:text-violet-400 mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to {novel.title}
         </Link>
 

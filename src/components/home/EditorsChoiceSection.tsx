@@ -8,7 +8,7 @@ type EditorsChoiceProps = {
 
 const EditorsChoiceSection = ({ apiData }: EditorsChoiceProps) => {
   return (
-    <div className="bg-gradient-to-b from-black to-[#111111] text-white py-16 md:py-24">
+    <div className="bg-gradient-to-b from-[#09090b] to-[#0c0c0e] text-white py-16 md:py-24">
       <div className="container mx-auto px-6 md:px-16 lg:px-36">
         <h2 className="text-3xl md:text-4xl font-bold mb-8">Editor's Choice</h2>
 

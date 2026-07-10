@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Markdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -14,6 +15,8 @@ import {
   Clock,
   Lock,
   CheckCircle2,
+  Eye,
+  Pencil,
 } from "lucide-react";
 
 interface ChapterData {
@@ -46,6 +49,7 @@ export default function ChapterEditor({ novelId, chapter }: ChapterEditorProps) 
   const [scheduledAt, setScheduledAt] = useState(chapter?.scheduledAt ?? "");
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [mode, setMode] = useState<"write" | "preview">("write");
 
   const isEditing = !!chapter;
 
@@ -173,14 +177,17 @@ export default function ChapterEditor({ novelId, chapter }: ChapterEditorProps) 
   };
 
   const toolbarBtn =
-    "p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors";
+    "p-2 rounded-lg bg-zinc-800/50 hover:bg-violet-500/10 text-zinc-400 hover:text-violet-300 transition-colors";
+
+  const inputClass =
+    "w-full bg-zinc-900/50 border border-white/[0.08] rounded-xl p-4 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 transition-all";
 
   return (
     <div className="space-y-6">
       {/* Header row: chapter number + title */}
       <div className="flex gap-4">
         <div className="w-28">
-          <label className="block text-sm font-medium text-gray-400 mb-2">Chapter #</label>
+          <label className="block text-sm font-medium text-zinc-400 mb-2">Chapter #</label>
           <input
             type="number"
             min={0}
@@ -188,40 +195,74 @@ export default function ChapterEditor({ novelId, chapter }: ChapterEditorProps) 
             value={orderIndex}
             onChange={(e) => setOrderIndex(parseInt(e.target.value) || 0)}
             disabled={isEditing}
-            className="w-full bg-gray-950 border border-gray-800 rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+            className={`${inputClass} disabled:opacity-50`}
           />
         </div>
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-400 mb-2">Chapter Title</label>
+          <label className="block text-sm font-medium text-zinc-400 mb-2">Chapter Title</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. The Beginning"
-            className="w-full bg-gray-950 border border-gray-800 rounded-lg p-4 text-white text-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className={`${inputClass} text-lg`}
           />
         </div>
       </div>
 
-      {/* Toolbar */}
-      <div className="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-xl p-2">
-        <button type="button" onClick={handleBold} className={toolbarBtn} title="Bold">
-          <Bold className="w-4 h-4" />
-        </button>
-        <button type="button" onClick={handleItalic} className={toolbarBtn} title="Italic">
-          <Italic className="w-4 h-4" />
-        </button>
-        <button type="button" onClick={handleSceneBreak} className={toolbarBtn} title="Scene Break">
-          <Minus className="w-4 h-4" />
-        </button>
-        <button type="button" onClick={handleInsertImage} className={toolbarBtn} title="Insert Image">
-          <ImageIcon className="w-4 h-4" />
-        </button>
+      {/* Toolbar + Write/Preview Toggle */}
+      <div className="flex items-center gap-2 bg-zinc-900/50 border border-white/[0.06] rounded-xl p-2">
+        {/* Write/Preview tabs */}
+        <div className="flex items-center bg-zinc-800/50 rounded-lg p-0.5 mr-2">
+          <button
+            type="button"
+            onClick={() => setMode("write")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+              mode === "write"
+                ? "bg-violet-600 text-white shadow-sm"
+                : "text-zinc-400 hover:text-white"
+            }`}
+          >
+            <Pencil className="w-3 h-3" />
+            Write
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("preview")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+              mode === "preview"
+                ? "bg-violet-600 text-white shadow-sm"
+                : "text-zinc-400 hover:text-white"
+            }`}
+          >
+            <Eye className="w-3 h-3" />
+            Preview
+          </button>
+        </div>
+
+        {/* Formatting buttons — only visible in write mode */}
+        {mode === "write" && (
+          <>
+            <div className="w-px h-5 bg-white/[0.06]" />
+            <button type="button" onClick={handleBold} className={toolbarBtn} title="Bold">
+              <Bold className="w-4 h-4" />
+            </button>
+            <button type="button" onClick={handleItalic} className={toolbarBtn} title="Italic">
+              <Italic className="w-4 h-4" />
+            </button>
+            <button type="button" onClick={handleSceneBreak} className={toolbarBtn} title="Scene Break">
+              <Minus className="w-4 h-4" />
+            </button>
+            <button type="button" onClick={handleInsertImage} className={toolbarBtn} title="Insert Image">
+              <ImageIcon className="w-4 h-4" />
+            </button>
+          </>
+        )}
 
         <div className="flex-1" />
 
         {/* Word count */}
-        <span className="text-sm text-gray-500 mr-2">{wordCount.toLocaleString()} words</span>
+        <span className="text-sm text-zinc-500 mr-2">{wordCount.toLocaleString()} words</span>
 
         {/* Auto-save indicator */}
         {lastSaved && (
@@ -232,43 +273,55 @@ export default function ChapterEditor({ novelId, chapter }: ChapterEditorProps) 
         )}
       </div>
 
-      {/* Content textarea */}
-      <textarea
-        ref={textareaRef}
-        rows={30}
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Write your chapter content here... (Markdown supported)"
-        className="w-full bg-gray-950 border border-gray-800 rounded-xl p-6 text-white font-mono text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/50 resize-y min-h-[500px]"
-      />
+      {/* Content area: textarea or preview */}
+      {mode === "write" ? (
+        <textarea
+          ref={textareaRef}
+          rows={30}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Write your chapter content here... (Markdown supported: **bold**, *italic*, # headings, --- breaks, ![alt](url) images)"
+          className={`${inputClass} font-mono text-sm text-zinc-200 leading-relaxed resize-y min-h-[500px]`}
+        />
+      ) : (
+        <div className="w-full bg-zinc-900/50 border border-white/[0.06] rounded-xl p-6 min-h-[500px]">
+          {content.trim() ? (
+            <div className="noctua-prose max-w-none">
+              <Markdown>{content}</Markdown>
+            </div>
+          ) : (
+            <p className="text-zinc-600 italic">Nothing to preview. Start writing in the Write tab.</p>
+          )}
+        </div>
+      )}
 
       {/* Options row */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-5">
-        <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Publishing Options</h3>
+      <div className="bg-zinc-900/50 border border-white/[0.06] rounded-xl p-6 space-y-5">
+        <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Publishing Options</h3>
 
         {/* Scheduled publishing */}
         <div className="flex items-center gap-4">
-          <Clock className="w-4 h-4 text-gray-500" />
-          <label className="text-sm text-gray-400 w-40">Schedule Publish</label>
+          <Clock className="w-4 h-4 text-zinc-500" />
+          <label className="text-sm text-zinc-400 w-40">Schedule Publish</label>
           <input
             type="datetime-local"
             value={scheduledAt ? scheduledAt.substring(0, 16) : ""}
             onChange={(e) => setScheduledAt(e.target.value ? new Date(e.target.value).toISOString() : "")}
-            className="bg-gray-950 border border-gray-800 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="bg-zinc-900/50 border border-white/[0.08] rounded-xl px-4 py-2 text-white text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50"
           />
         </div>
 
         {/* Premium chapter */}
         <div className="flex items-center gap-4">
-          <Lock className="w-4 h-4 text-gray-500" />
+          <Lock className="w-4 h-4 text-zinc-500" />
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={isLocked}
               onChange={(e) => setIsLocked(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-600 bg-gray-950 text-primary focus:ring-primary/50"
+              className="w-4 h-4 rounded border-zinc-600 bg-zinc-900/50 text-violet-600 focus:ring-violet-500/20"
             />
-            <span className="text-sm text-gray-400">Premium Chapter (requires coins to unlock)</span>
+            <span className="text-sm text-zinc-400">Premium Chapter (requires coins to unlock)</span>
           </label>
           {isLocked && (
             <input
@@ -277,7 +330,7 @@ export default function ChapterEditor({ novelId, chapter }: ChapterEditorProps) 
               value={coinPrice}
               onChange={(e) => setCoinPrice(parseInt(e.target.value) || 0)}
               placeholder="Coin price"
-              className="w-28 bg-gray-950 border border-gray-800 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-28 bg-zinc-900/50 border border-white/[0.08] rounded-xl px-4 py-2 text-white text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50"
             />
           )}
         </div>

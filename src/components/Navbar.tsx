@@ -85,14 +85,14 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5" aria-label="Main navigation">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5 backdrop-blur-xl bg-[#09090b]/80 border-b border-white/[0.06]" aria-label="Main navigation">
       <Link href="/" className="max-md:flex-1">
         <h1 className="text-xl text-gray-100 font-bold">NoctuaNovel</h1>
       </Link>
 
       {!isSearchOpen && (
         <div
-          className={`max-md:absolute max-md:top-0 max-md:left-0 max-md:font-medium max-md:text-lg z-50 flex flex-col md:flex-row items-center max-md:justify-center gap-8 md:px-8 py-3 max-md:h-screen md:rounded-full backdrop-blur text-gray-100 bg-black/70 md:bg-white/10 md:border border-gray-300/20 overflow-hidden transition-all duration-300 ${
+          className={`max-md:absolute max-md:top-0 max-md:left-0 max-md:font-medium max-md:text-lg z-50 flex flex-col md:flex-row items-center max-md:justify-center gap-8 md:px-8 py-3 max-md:h-screen md:rounded-full backdrop-blur-xl text-gray-100 max-md:bg-[#09090b]/95 md:bg-white/[0.03] md:border border-white/[0.06] overflow-hidden transition-all duration-300 ${
             isOpen ? "max-md:w-full" : "max-md:w-0"
           }`}
         >
@@ -115,30 +115,30 @@ export default function Navbar() {
           {/* Mobile Search */}
           <div className="md:hidden w-4/5 relative" ref={searchRef}>
             <form onSubmit={handleSearchSubmit}>
-              <div className="flex items-center rounded-full bg-white/10 border border-gray-300/20 px-4 py-2">
-                <SearchIcon className="w-5 h-5 text-gray-300 mr-2" />
+              <div className="flex items-center rounded-full bg-white/[0.05] border border-white/[0.08] px-4 py-2">
+                <SearchIcon className="w-5 h-5 text-zinc-500 mr-2" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search novels..."
-                  className="bg-transparent text-gray-100 placeholder-gray-400 w-full focus:outline-none"
+                  className="bg-transparent text-gray-100 placeholder-zinc-500 w-full focus:outline-none"
                 />
               </div>
             </form>
             {/* Mobile Live Results */}
             {liveResults.length > 0 && (
-              <div className="absolute top-full mt-2 w-full bg-gray-900 border border-gray-700 rounded-lg overflow-hidden shadow-xl z-50">
+              <div className="absolute top-full mt-2 w-full bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden shadow-xl z-50">
                 {liveResults.map((novel) => {
                   const slug = getSlugFromUrl(novel.url);
                   return (
-                    <Link key={slug} href={`/novel/${slug}`} onClick={() => { setLiveResults([]); setIsOpen(false); setSearchQuery(""); }} className="flex items-center gap-3 p-3 hover:bg-gray-800 transition">
-                      <div className="w-10 h-14 relative flex-shrink-0 bg-gray-800">
+                    <Link key={slug} href={`/novel/${slug}`} onClick={() => { setLiveResults([]); setIsOpen(false); setSearchQuery(""); }} className="flex items-center gap-3 p-3 hover:bg-zinc-800/50 transition">
+                      <div className="w-10 h-14 relative flex-shrink-0 bg-zinc-800">
                         {novel.image_url && <Image src={`/api/proxy-image?url=${encodeURIComponent(novel.image_url)}`} alt="" fill unoptimized className="object-cover rounded-sm" />}
                       </div>
                       <div className="flex-col min-w-0">
                         <p className="text-sm font-medium text-white truncate w-full">{novel.title}</p>
-                        <p className="text-xs text-gray-400 truncate w-full">{novel.genres?.join(", ")}</p>
+                        <p className="text-xs text-zinc-500 truncate w-full">{novel.genres?.join(", ")}</p>
                       </div>
                     </Link>
                   );
@@ -152,32 +152,32 @@ export default function Navbar() {
       {/* Desktop Search */}
       {isSearchOpen && (
         <div className="hidden md:flex flex-grow justify-center relative" ref={searchRef}>
-          <form onSubmit={handleSearchSubmit} className="flex items-center px-2 py-1 w-full max-w-lg rounded-full backdrop-blur bg-white/10 border border-gray-300/20 relative z-50">
-            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search novels..." className="bg-transparent text-gray-100 placeholder-gray-200 w-full px-4 py-2 focus:outline-none" autoFocus />
+          <form onSubmit={handleSearchSubmit} className="flex items-center px-2 py-1 w-full max-w-lg rounded-full backdrop-blur-xl bg-white/[0.05] border border-white/[0.08] relative z-50">
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search novels..." className="bg-transparent text-gray-100 placeholder-zinc-500 w-full px-4 py-2 focus:outline-none" autoFocus />
           </form>
 
           {/* Desktop Live Results */}
           {(liveResults.length > 0 || isSearching) && (
-            <div className="absolute top-full mt-4 w-full max-w-lg bg-gray-950 border border-gray-700 rounded-xl overflow-hidden shadow-2xl z-40">
+            <div className="absolute top-full mt-4 w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl z-40">
               {isSearching && liveResults.length === 0 ? (
-                <div className="p-4 text-center text-sm text-gray-400">Searching...</div>
+                <div className="p-4 text-center text-sm text-zinc-500">Searching...</div>
               ) : (
                 <>
                   {liveResults.map((novel) => {
                     const slug = getSlugFromUrl(novel.url);
                     return (
-                      <Link key={slug} href={`/novel/${slug}`} onClick={() => { setLiveResults([]); setIsSearchOpen(false); setSearchQuery(""); }} className="flex items-center gap-4 p-3 hover:bg-gray-800 transition">
-                        <div className="w-12 h-16 relative flex-shrink-0 bg-gray-800 rounded shadow-sm overflow-hidden">
+                      <Link key={slug} href={`/novel/${slug}`} onClick={() => { setLiveResults([]); setIsSearchOpen(false); setSearchQuery(""); }} className="flex items-center gap-4 p-3 hover:bg-zinc-800/50 transition">
+                        <div className="w-12 h-16 relative flex-shrink-0 bg-zinc-800 rounded shadow-sm overflow-hidden">
                           {novel.image_url && <Image src={`/api/proxy-image?url=${encodeURIComponent(novel.image_url)}`} alt="" fill unoptimized className="object-cover" />}
                         </div>
                         <div className="flex-col min-w-0 flex-1">
                           <p className="text-sm font-semibold text-white truncate w-full">{novel.title}</p>
-                          {novel.genres && <p className="text-xs text-gray-400 truncate w-full mt-1">{novel.genres.slice(0, 3).join(", ")}</p>}
+                          {novel.genres && <p className="text-xs text-zinc-500 truncate w-full mt-1">{novel.genres.slice(0, 3).join(", ")}</p>}
                         </div>
                       </Link>
                     );
                   })}
-                  <button onClick={handleSearchSubmit} className="w-full p-3 text-sm text-center text-primary font-medium hover:bg-gray-800 bg-gray-900/50 transition">
+                  <button onClick={handleSearchSubmit} className="w-full p-3 text-sm text-center text-primary font-medium hover:bg-zinc-800/50 bg-zinc-900/50 transition">
                     View all results
                   </button>
                 </>
@@ -193,7 +193,7 @@ export default function Navbar() {
         </button>
 
         {!user ? (
-          <button onClick={() => openSignIn()} className="px-4 py-1 sm:px-7 sm:py-2 bg-gray-100 hover:bg-gray-400 text-black transition rounded-full font-medium cursor-pointer">Login</button>
+          <button onClick={() => openSignIn()} className="px-4 py-1 sm:px-7 sm:py-2 bg-violet-600 hover:bg-violet-500 text-white transition rounded-full font-medium cursor-pointer">Login</button>
         ) : (
           <div className="flex items-center gap-4">
             <CoinBalance />

@@ -31,17 +31,17 @@ const FavoritePage = async () => {
   const initialFavoriteNovels = await Promise.all(favoriteNovelsPromises);
 
   return (
-    <div className="bg-black text-white min-h-screen pt-32">
+    <div className="bg-[#09090b] text-white min-h-screen pt-32">
       <header className="container mx-auto px-6 md:px-16 lg:px-36 mb-8 flex items-center gap-4">
         <Link href="/" passHref>
-          <ArrowLeft className="w-8 h-8 cursor-pointer hover:text-gray-400" />
+          <ArrowLeft className="w-8 h-8 cursor-pointer hover:text-violet-400" />
         </Link>
         <h1 className="text-4xl font-bold text-white">Favorite Novels</h1>
       </header>
 
       <FavoriteClientPage initialFavoriteNovels={initialFavoriteNovels} />
 
-      <div className="container mx-auto pb-20 px-6 md:px-16 lg:px-36 mt-16 pt-12 border-t border-gray-800">
+      <div className="container mx-auto pb-20 px-6 md:px-16 lg:px-36 mt-16 pt-12 border-t border-white/[0.06]">
         <UserCommentSection />
       </div>
     </div>

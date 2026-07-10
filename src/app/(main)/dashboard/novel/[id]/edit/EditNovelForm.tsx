@@ -48,64 +48,64 @@ export default function EditNovelForm({ novel }: { novel: any }) {
   };
 
   return (
-    <div className="bg-gray-950 min-h-screen text-gray-300 pt-24 pb-16">
+    <div className="bg-[#09090b] min-h-screen text-zinc-300 pt-24 pb-16">
       <div className="container mx-auto px-6 md:px-16 lg:px-36">
-        <Link href={`/dashboard/novel/${novel.id}`} className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-white mb-8 transition-colors">
+        <Link href={`/dashboard/novel/${novel.id}`} className="inline-flex items-center text-sm font-medium text-zinc-500 hover:text-violet-400 mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Novel Details
         </Link>
 
-        <div className="max-w-3xl mx-auto bg-gray-900 shadow-xl shadow-black/50 p-8 md:p-12 rounded-2xl border border-gray-800">
-          <div className="mb-8 border-b border-gray-800 pb-6">
+        <div className="max-w-3xl mx-auto bg-zinc-900/50 shadow-2xl shadow-black/20 p-8 md:p-12 rounded-2xl border border-white/[0.06]">
+          <div className="mb-8 border-b border-white/[0.06] pb-6">
             <h1 className="text-3xl font-bold text-white mb-2">Edit Novel</h1>
-            <p className="text-gray-400">Update the details of "{novel.title}".</p>
+            <p className="text-zinc-500">Update the details of "{novel.title}".</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-200 mb-2">Title <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">Title <span className="text-red-500">*</span></label>
                 <input
                   required
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full bg-gray-950 border border-gray-800 rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  className="w-full bg-zinc-900/50 border border-white/[0.08] rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-200 mb-2">Image URL (Optional)</label>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">Image URL (Optional)</label>
                 <input
                   type="url"
                   value={formData.imageUrl}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  className="w-full bg-gray-950 border border-gray-800 rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  className="w-full bg-zinc-900/50 border border-white/[0.08] rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-200 mb-2">Genres (Optional)</label>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">Genres (Optional)</label>
                 <input
                   type="text"
                   value={formData.genres}
                   onChange={(e) => setFormData({ ...formData, genres: e.target.value })}
-                  className="w-full bg-gray-950 border border-gray-800 rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  className="w-full bg-zinc-900/50 border border-white/[0.08] rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 transition-all"
                   placeholder="Fantasy, Action, Adventure (comma separated)"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-200 mb-2">Synopsis</label>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">Synopsis</label>
                 <textarea
                   rows={6}
                   value={formData.synopsis}
                   onChange={(e) => setFormData({ ...formData, synopsis: e.target.value })}
-                  className="w-full bg-gray-950 border border-gray-800 rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary resize-y transition-all leading-relaxed"
+                  className="w-full bg-zinc-900/50 border border-white/[0.08] rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 resize-y transition-all leading-relaxed"
                 />
               </div>
             </div>
 
-            <div className="pt-6 border-t border-gray-800 flex justify-end gap-4">
+            <div className="pt-6 border-t border-white/[0.06] flex justify-end gap-4">
               <Link href={`/dashboard/novel/${novel.id}`}>
                 <Button variant="outline" type="button" className="w-full md:w-auto text-base">
                   Cancel

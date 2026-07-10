@@ -9,7 +9,7 @@ type RecommendationProps = {
 
 const RecommendationSection = ({ apiData }: RecommendationProps) => {
   return (
-    <div className="relative bg-[#111111] text-white pt-16 md:pt-24 pb-20">
+    <div className="relative bg-[#0c0c0e] text-white pt-16 md:pt-24 pb-20">
       <div className="relative z-10 container mx-auto px-6 md:px-16 lg:px-36">
         <h2 className="text-3xl md:text-4xl font-bold mb-8">Recommended For You</h2>
 
@@ -23,7 +23,7 @@ const RecommendationSection = ({ apiData }: RecommendationProps) => {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-gray-950 to-transparent pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-[#09090b] to-transparent pointer-events-none"></div>
     </div>
   );
 };

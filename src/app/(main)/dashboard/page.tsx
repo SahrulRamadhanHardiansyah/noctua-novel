@@ -52,7 +52,7 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="bg-gray-950 text-white min-h-screen pt-24 pb-16">
+    <div className="bg-[#09090b] text-white min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-6 md:px-16 lg:px-36">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
@@ -60,7 +60,7 @@ export default async function DashboardPage() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
               Welcome back, {user?.firstName || "Author"} ✨
             </h1>
-            <p className="text-gray-400">
+            <p className="text-zinc-500">
               Manage your novels, track performance, and grow your readership.
             </p>
           </div>
@@ -83,14 +83,14 @@ export default async function DashboardPage() {
           {stats.map((s) => (
             <div
               key={s.label}
-              className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center gap-4"
+              className="bg-zinc-900/50 border border-white/[0.06] rounded-2xl p-6 flex items-center gap-4 hover:border-violet-500/20 transition-all duration-300"
             >
-              <div className="bg-gray-800 rounded-lg p-3">
-                <s.icon className="w-5 h-5 text-gray-300" />
+              <div className="bg-violet-500/10 rounded-xl p-3">
+                <s.icon className="w-5 h-5 text-violet-400" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-white">{s.value}</p>
-                <p className="text-sm text-gray-400">{s.label}</p>
+                <p className="text-sm text-zinc-500">{s.label}</p>
               </div>
             </div>
           ))}
@@ -100,14 +100,14 @@ export default async function DashboardPage() {
         <h2 className="text-xl font-bold text-white mb-6">My Novels</h2>
 
         {myNovels.length === 0 ? (
-          <div className="text-center py-20 bg-gray-900/50 rounded-2xl border border-gray-800 shadow-xl">
-            <div className="bg-gray-800/50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Book className="w-10 h-10 text-gray-400" />
+          <div className="text-center py-20 bg-zinc-900/30 rounded-2xl border border-white/[0.06] shadow-xl">
+            <div className="bg-zinc-800/50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Book className="w-10 h-10 text-zinc-500" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-3">
               No novels yet
             </h2>
-            <p className="text-gray-400 mb-8 max-w-md mx-auto">
+            <p className="text-zinc-500 mb-8 max-w-md mx-auto">
               Start your journey as an author. Write your first original novel
               and share it with the NoctuaNovel community!
             </p>
@@ -122,10 +122,10 @@ export default async function DashboardPage() {
             {myNovels.map((novel) => (
               <div
                 key={novel.id}
-                className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-gray-600 transition-all hover:shadow-2xl hover:shadow-black flex flex-col group"
+                className="bg-zinc-900/50 border border-white/[0.06] rounded-2xl overflow-hidden hover:border-violet-500/20 hover:shadow-xl hover:shadow-violet-500/5 transition-all duration-300 flex flex-col group"
               >
                 {/* Cover */}
-                <div className="h-32 bg-gray-800 relative w-full overflow-hidden">
+                <div className="h-32 bg-zinc-800/50 relative w-full overflow-hidden">
                   {novel.imageUrl ? (
                     <Image
                       src={`/api/proxy-image?url=${encodeURIComponent(novel.imageUrl)}`}
@@ -135,7 +135,7 @@ export default async function DashboardPage() {
                       unoptimized
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 to-zinc-900" />
                   )}
                   <div className="absolute top-4 right-4">
                     <Badge
@@ -157,25 +157,25 @@ export default async function DashboardPage() {
                     {novel.genres.slice(0, 3).map((g) => (
                       <span
                         key={g}
-                        className="px-2 py-0.5 bg-gray-800 text-gray-300 rounded text-[10px] font-medium tracking-wide"
+                        className="px-2 py-0.5 bg-violet-500/10 text-violet-300 border-0 rounded text-[10px] font-medium tracking-wide"
                       >
                         {g}
                       </span>
                     ))}
                     {novel.genres.length > 3 && (
-                      <span className="text-[10px] text-gray-500">
+                      <span className="text-[10px] text-zinc-500">
                         +{novel.genres.length - 3} more
                       </span>
                     )}
                   </div>
 
-                  <p className="text-sm text-gray-400 mb-6 line-clamp-2 flex-1">
+                  <p className="text-sm text-zinc-300 mb-6 line-clamp-2 flex-1">
                     {novel.synopsis || "No synopsis provided."}
                   </p>
 
                   {/* Footer stats + manage */}
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-800/50 mt-auto">
-                    <div className="flex items-center gap-4 text-sm text-gray-400">
+                  <div className="flex justify-between items-center pt-4 border-t border-white/[0.06] mt-auto">
+                    <div className="flex items-center gap-4 text-sm text-zinc-500">
                       <span className="flex items-center gap-1">
                         <Book className="w-3.5 h-3.5" />
                         {novel._count.chapters}
