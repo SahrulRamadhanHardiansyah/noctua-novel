@@ -129,7 +129,15 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
     setShowBookmarkDialog(false);
     setBookmarkNote("");
     setSelectedText("");
-    toast.success("Bookmark saved!");
+    toast.success(selectedText ? "Quote saved!" : "Bookmark saved!");
+    // Trigger achievement if it's a quote (has selected text)
+    if (selectedText) {
+      fetch("/api/achievements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trigger: "quote_saved" }),
+      }).catch(() => {});
+    }
   }, [chapterSlug, novelSlug, selectedText, bookmarkNote, bookmarks]);
 
   const deleteBookmark = useCallback((id: string) => {
