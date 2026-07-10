@@ -22,6 +22,12 @@ type ChapterClientProps = {
 
 const fontSizes = ["text-base", "text-lg", "text-xl", "text-2xl"];
 
+// ponytail: strip "Novel Title - " prefix from chapter_full_title
+const getShortTitle = (title: string) => {
+  const idx = title.indexOf(" - ");
+  return idx !== -1 ? title.substring(idx + 3) : title;
+};
+
 const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChapter }: ChapterClientProps) => {
   const scrollKey = `scroll_${novelSlug}_${chapterTitle}`;
   const fontKey = `fontSize_${novelSlug}`;
@@ -160,10 +166,10 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
         {/* Chapter Navigation */}
         <div className="flex justify-between items-center mt-12 pb-20 max-w-4xl mx-auto gap-4">
           {prevChapter ? (
-            <Link href={`/chapter/${prevChapter.slug}`} className="flex-1">
+            <Link href={`/chapter/${prevChapter.slug}`} className="flex-1 min-w-0">
               <Button variant="outline" className="w-full justify-start gap-2 text-left">
                 <ChevronLeft className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{prevChapter.title}</span>
+                <span className="truncate max-w-[150px] sm:max-w-[200px]">{getShortTitle(prevChapter.title)}</span>
               </Button>
             </Link>
           ) : (
@@ -171,14 +177,13 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
           )}
 
           <Button variant="secondary" onClick={() => router.push(`/novel/${novelSlug}`)} className="flex-shrink-0">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Chapters
+            List Chapter
           </Button>
 
           {nextChapter ? (
-            <Link href={`/chapter/${nextChapter.slug}`} className="flex-1">
+            <Link href={`/chapter/${nextChapter.slug}`} className="flex-1 min-w-0">
               <Button variant="outline" className="w-full justify-end gap-2 text-right">
-                <span className="truncate">{nextChapter.title}</span>
+                <span className="truncate max-w-[150px] sm:max-w-[200px]">{getShortTitle(nextChapter.title)}</span>
                 <ChevronRight className="h-4 w-4 flex-shrink-0" />
               </Button>
             </Link>
