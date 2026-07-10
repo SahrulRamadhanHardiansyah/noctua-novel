@@ -33,7 +33,7 @@ export const FavoriteButton = ({ novelSlug }: FavoriteButtonProps) => {
           setIsFavorited(data.isFavorited);
         }
       } catch {
-        // silent on initial load
+        toast.error("Failed to check favorite status");
       } finally {
         setIsLoading(false);
       }

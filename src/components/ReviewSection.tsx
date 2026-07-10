@@ -70,7 +70,9 @@ export default function ReviewSection({ novelId }: { novelId: string }) {
         setAverageRating(data.averageRating || 0);
         setTotalReviews(data.totalReviews || 0);
       }
-    } catch {}
+    } catch {
+      toast.error("Failed to load reviews");
+    }
   };
 
   useEffect(() => {

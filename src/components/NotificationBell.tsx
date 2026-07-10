@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { timeAgo } from "@/lib/utils/notifications";
+import { toast } from "sonner";
 
 const typeIcons: Record<string, React.ReactNode> = {
   chapter_release: <BookOpen className="w-4 h-4 text-blue-400" />,
@@ -35,7 +36,9 @@ export default function NotificationBell() {
       try {
         const res = await fetch("/api/notifications");
         if (res.ok) setNotifications(await res.json());
-      } catch {}
+      } catch {
+        // non-critical: notifications degrade silently
+      }
     };
     fetch_();
     const interval = setInterval(fetch_, 30000);
@@ -63,7 +66,9 @@ export default function NotificationBell() {
           ? prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
           : prev.map((n) => ({ ...n, isRead: true }))
       );
-    } catch {}
+    } catch {
+      toast.error("Failed to mark notifications as read");
+    }
   };
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;

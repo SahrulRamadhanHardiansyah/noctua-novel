@@ -6,6 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel
 import { Settings, Minus, Plus, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { markChapterAsRead } from "@/lib/utils/reading-history";
 
 type ChapterNavInfo = {
   slug: string;
@@ -16,20 +17,34 @@ type ChapterClientProps = {
   chapterTitle: string;
   content: string;
   novelSlug: string;
+  chapterSlug?: string;
   prevChapter?: ChapterNavInfo;
   nextChapter?: ChapterNavInfo;
 };
 
 const fontSizes = ["text-base", "text-lg", "text-xl", "text-2xl"];
 
-const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChapter }: ChapterClientProps) => {
+type FontFamily = { label: string; className: string };
+const fontFamilies: FontFamily[] = [
+  { label: "Sans-serif", className: "font-sans" },
+  { label: "Serif", className: "font-serif" },
+  { label: "Monospace", className: "font-mono" },
+];
+
+const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChapter, nextChapter }: ChapterClientProps) => {
   const scrollKey = `scroll_${novelSlug}_${chapterTitle}`;
   const fontKey = `fontSize_${novelSlug}`;
+  const fontFamilyKey = `fontFamily_${novelSlug}`;
 
   const [fontSizeIndex, setFontSizeIndex] = useState(() => {
     if (typeof window === "undefined") return 1;
     const saved = localStorage.getItem(fontKey);
     return saved ? Number(saved) : 1;
+  });
+  const [fontFamilyIndex, setFontFamilyIndex] = useState(() => {
+    if (typeof window === "undefined") return 0;
+    const saved = localStorage.getItem(fontFamilyKey);
+    return saved ? Number(saved) : 0;
   });
   const [readingProgress, setReadingProgress] = useState(0);
   const router = useRouter();
@@ -42,6 +57,13 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
       return () => clearTimeout(timer);
     }
   }, [scrollKey]);
+
+  // Mark chapter as read when opened
+  useEffect(() => {
+    if (chapterSlug) {
+      markChapterAsRead(chapterSlug);
+    }
+  }, [chapterSlug]);
 
   const handleScroll = useCallback(() => {
     const scrollTop = window.scrollY;
@@ -74,6 +96,11 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
       localStorage.setItem(fontKey, String(next));
       return next;
     });
+  };
+
+  const handleFontFamilyChange = (index: number) => {
+    setFontFamilyIndex(index);
+    localStorage.setItem(fontFamilyKey, String(index));
   };
 
   const formattedContent = useMemo(() => content.split("\n").map((p, i) => {
@@ -151,11 +178,30 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
                   </Button>
                 </div>
               </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="font-normal">Font Family</DropdownMenuLabel>
+                <div className="space-y-1 px-2 py-1.5">
+                  {fontFamilies.map((font, idx) => (
+                    <button
+                      key={font.label}
+                      onClick={() => handleFontFamilyChange(idx)}
+                      className={`w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors cursor-pointer ${
+                        idx === fontFamilyIndex
+                          ? "bg-primary text-white"
+                          : "hover:bg-gray-800 text-gray-300"
+                      } ${font.className}`}
+                    >
+                      {font.label}
+                    </button>
+                  ))}
+                </div>
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
 
-        <article className={`w-full max-w-4xl mx-auto leading-loose transition-all duration-200 ${fontSizes[fontSizeIndex]}`}>{formattedContent}</article>
+        <article className={`w-full max-w-4xl mx-auto leading-loose transition-all duration-200 ${fontSizes[fontSizeIndex]} ${fontFamilies[fontFamilyIndex].className}`}>{formattedContent}</article>
 
         {/* Chapter Navigation */}
         <div className="flex justify-between items-center mt-12 pb-20 max-w-4xl mx-auto gap-4">
