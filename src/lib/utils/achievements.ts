@@ -130,6 +130,7 @@ export async function checkTimeBasedAchievements(userId: string): Promise<string
 /**
  * Seed all achievements into the database.
  * Includes coin and title rewards for each achievement.
+ * Fault-tolerant: catches errors so API doesn't break if schema is out of sync.
  */
 export async function seedAchievements() {
   const SEED_DATA = [
@@ -147,31 +148,36 @@ export async function seedAchievements() {
     { key: "author_debut", coinReward: 50, titleReward: "The Author", xpReward: 100 },
   ];
 
-  for (const def of ACHIEVEMENT_DEFS) {
-    const seed = SEED_DATA.find((s) => s.key === def.key);
-    await prisma.achievement.upsert({
-      where: { key: def.key },
-      update: {
-        title: def.title,
-        description: def.description,
-        icon: def.icon,
-        category: def.category,
-        requirement: def.requirement,
-        coinReward: seed?.coinReward ?? 0,
-        titleReward: seed?.titleReward ?? null,
-        xpReward: seed?.xpReward ?? 50,
-      },
-      create: {
-        key: def.key,
-        title: def.title,
-        description: def.description,
-        icon: def.icon,
-        category: def.category,
-        requirement: def.requirement,
-        coinReward: seed?.coinReward ?? 0,
-        titleReward: seed?.titleReward ?? null,
-        xpReward: seed?.xpReward ?? 50,
-      },
-    });
+  try {
+    for (const def of ACHIEVEMENT_DEFS) {
+      const seed = SEED_DATA.find((s) => s.key === def.key);
+      await prisma.achievement.upsert({
+        where: { key: def.key },
+        update: {
+          title: def.title,
+          description: def.description,
+          icon: def.icon,
+          category: def.category,
+          requirement: def.requirement,
+          coinReward: seed?.coinReward ?? 0,
+          titleReward: seed?.titleReward ?? null,
+          xpReward: seed?.xpReward ?? 50,
+        },
+        create: {
+          key: def.key,
+          title: def.title,
+          description: def.description,
+          icon: def.icon,
+          category: def.category,
+          requirement: def.requirement,
+          coinReward: seed?.coinReward ?? 0,
+          titleReward: seed?.titleReward ?? null,
+          xpReward: seed?.xpReward ?? 50,
+        },
+      });
+    }
+  } catch (err) {
+    console.error("[seedAchievements] Failed to seed — did you run `npx prisma db push`?", err);
+    // Don't throw — let the API continue and return whatever exists in DB
   }
 }
