@@ -9,10 +9,19 @@ export async function GET() {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // Ensure achievements exist in DB
+    // Try to seed achievements — don't fail if seeding has issues
     await seedAchievements();
 
-    const achievements = await prisma.achievement.findMany();
+    // Fetch all achievements from DB (whatever exists)
+    const achievements = await prisma.achievement.findMany({
+      orderBy: [{ category: "asc" }, { requirement: "asc" }],
+    });
+
+    // If DB is truly empty after seed attempt, return empty with hint
+    if (achievements.length === 0) {
+      return NextResponse.json([]);
+    }
+
     const userAchievements = await prisma.userAchievement.findMany({
       where: { userId },
     });
@@ -36,7 +45,8 @@ export async function GET() {
     });
 
     return NextResponse.json(result);
-  } catch {
+  } catch (err) {
+    console.error("[GET /api/achievements]", err);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -47,7 +57,7 @@ export async function POST(req: Request) {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // Ensure achievements exist
+    // Try to seed — don't fail if seeding has issues
     await seedAchievements();
 
     const { trigger } = await req.json();
@@ -55,14 +65,12 @@ export async function POST(req: Request) {
 
     switch (trigger) {
       case "chapter_read": {
-        // Increment reading achievements
         const firstStep = await unlockAchievement(userId, "first_step");
         if (firstStep) unlocked.push(firstStep);
         const marathon = await unlockAchievement(userId, "marathon_reader");
         if (marathon) unlocked.push(marathon);
         const bookworm = await unlockAchievement(userId, "bookworm");
         if (bookworm) unlocked.push(bookworm);
-        // Time-based
         const timeBased = await checkTimeBasedAchievements(userId);
         unlocked.push(...timeBased);
         break;
@@ -94,7 +102,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // Show toast for unlocked achievements
     if (unlocked.length > 0) {
       return NextResponse.json({
         unlocked,
@@ -103,7 +110,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ unlocked: [] });
-  } catch {
+  } catch (err) {
+    console.error("[POST /api/achievements]", err);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

@@ -17,48 +17,58 @@ const ACHIEVEMENTS = [
   { key: "author_debut", title: "Author Debut", description: "Publish your first novel", icon: "PenTool", category: "author", requirement: 1, coinReward: 50, titleReward: "The Author", xpReward: 100 },
 ];
 
+const BORDERS = [
+  { key: "none", name: "No Border", description: "Default appearance", cssClass: "", requiredLvl: 0, rarity: "common" },
+  { key: "bronze_frame", name: "Bronze Frame", description: "Unlocked at Level 5", cssClass: "ring-2 ring-amber-700/60 shadow-[0_0_8px_rgba(180,120,60,0.3)]", requiredLvl: 5, rarity: "common" },
+  { key: "silver_frame", name: "Silver Frame", description: "Unlocked at Level 10", cssClass: "ring-2 ring-slate-400/60 shadow-[0_0_10px_rgba(148,163,184,0.3)] bg-gradient-to-br from-slate-300/10 to-slate-500/10", requiredLvl: 10, rarity: "rare" },
+  { key: "golden_glow", name: "Golden Glow", description: "Unlocked at Level 20", cssClass: "ring-2 ring-amber-400/70 shadow-[0_0_15px_rgba(251,191,36,0.4)] animate-pulse", requiredLvl: 20, rarity: "epic" },
+  { key: "violet_aura", name: "Violet Aura", description: "Unlocked at Level 35", cssClass: "ring-2 ring-violet-400/70 shadow-[0_0_20px_rgba(139,92,246,0.5)] bg-gradient-to-br from-violet-500/10 to-purple-500/10", requiredLvl: 35, rarity: "epic" },
+  { key: "diamond_crown", name: "Diamond Crown", description: "Unlocked at Level 50", cssClass: "ring-2 ring-cyan-300/80 shadow-[0_0_25px_rgba(103,232,249,0.6)] bg-gradient-to-r from-cyan-400/10 via-violet-400/10 to-pink-400/10 animate-pulse", requiredLvl: 50, rarity: "legendary" },
+];
+
 async function main() {
-  console.log("Seeding achievements...");
+  console.log("🎮 Seeding achievements...");
 
   for (const ach of ACHIEVEMENTS) {
-    await prisma.achievement.upsert({
-      where: { key: ach.key },
-      update: {
-        title: ach.title,
-        description: ach.description,
-        icon: ach.icon,
-        category: ach.category,
-        requirement: ach.requirement,
-        coinReward: ach.coinReward,
-        titleReward: ach.titleReward,
-        xpReward: ach.xpReward,
-      },
-      create: ach,
-    });
-    console.log(`  ✓ ${ach.title} (+${ach.xpReward} XP, +${ach.coinReward} coins${ach.titleReward ? `, title: "${ach.titleReward}"` : ""})`);
+    try {
+      await prisma.achievement.upsert({
+        where: { key: ach.key },
+        update: {
+          title: ach.title,
+          description: ach.description,
+          icon: ach.icon,
+          category: ach.category,
+          requirement: ach.requirement,
+          coinReward: ach.coinReward,
+          titleReward: ach.titleReward,
+          xpReward: ach.xpReward,
+        },
+        create: ach,
+      });
+      console.log(`  ✅ ${ach.title} (+${ach.xpReward} XP, +${ach.coinReward} coins${ach.titleReward ? `, title: "${ach.titleReward}"` : ""})`);
+    } catch (err) {
+      console.error(`  ❌ Failed to seed "${ach.key}":`, err);
+    }
   }
 
-  // Seed profile borders
-  console.log("\nSeeding profile borders...");
-  const BORDERS = [
-    { key: "none", name: "No Border", description: "Default appearance", cssClass: "", requiredLvl: 0, rarity: "common" },
-    { key: "bronze_frame", name: "Bronze Frame", description: "Unlocked at Level 5", cssClass: "ring-2 ring-amber-700/60 shadow-[0_0_8px_rgba(180,120,60,0.3)]", requiredLvl: 5, rarity: "common" },
-    { key: "silver_frame", name: "Silver Frame", description: "Unlocked at Level 10", cssClass: "ring-2 ring-slate-400/60 shadow-[0_0_10px_rgba(148,163,184,0.3)] bg-gradient-to-br from-slate-300/10 to-slate-500/10", requiredLvl: 10, rarity: "rare" },
-    { key: "golden_glow", name: "Golden Glow", description: "Unlocked at Level 20", cssClass: "ring-2 ring-amber-400/70 shadow-[0_0_15px_rgba(251,191,36,0.4)] animate-pulse", requiredLvl: 20, rarity: "epic" },
-    { key: "violet_aura", name: "Violet Aura", description: "Unlocked at Level 35", cssClass: "ring-2 ring-violet-400/70 shadow-[0_0_20px_rgba(139,92,246,0.5)] bg-gradient-to-br from-violet-500/10 to-purple-500/10", requiredLvl: 35, rarity: "epic" },
-    { key: "diamond_crown", name: "Diamond Crown", description: "Unlocked at Level 50 — Legendary", cssClass: "ring-2 ring-cyan-300/80 shadow-[0_0_25px_rgba(103,232,249,0.6)] bg-gradient-to-r from-cyan-400/10 via-violet-400/10 to-pink-400/10 animate-pulse", requiredLvl: 50, rarity: "legendary" },
-  ];
+  console.log(`\n🎨 Seeding profile borders...`);
 
   for (const b of BORDERS) {
-    await prisma.profileBorder.upsert({
-      where: { key: b.key },
-      update: { name: b.name, description: b.description, cssClass: b.cssClass, requiredLvl: b.requiredLvl, rarity: b.rarity },
-      create: b,
-    });
-    console.log(`  ✓ ${b.name} (${b.rarity}, Lv${b.requiredLvl})`);
+    try {
+      await prisma.profileBorder.upsert({
+        where: { key: b.key },
+        update: { name: b.name, description: b.description, cssClass: b.cssClass, requiredLvl: b.requiredLvl, rarity: b.rarity },
+        create: b,
+      });
+      console.log(`  ✅ ${b.name} (${b.rarity}, Lv${b.requiredLvl})`);
+    } catch (err) {
+      console.error(`  ❌ Failed to seed border "${b.key}":`, err);
+    }
   }
 
-  console.log("\nDone!");
+  // Verify
+  const count = await prisma.achievement.count();
+  console.log(`\n✅ Done! ${count} achievements in database.`);
 }
 
 main()
