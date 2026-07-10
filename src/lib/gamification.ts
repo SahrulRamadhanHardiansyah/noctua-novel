@@ -126,13 +126,15 @@ export interface XpResult {
 }
 
 /**
- * Award XP to a user. Handles level calculation, border unlocks, and returns result.
+ * Award XP to a user. Handles level calculation, border unlocks atomically.
+ * Uses $transaction so XP + level + border unlocks all succeed or all fail.
  */
 export async function awardXp(
   userId: string,
   amount: number,
   reason: string
 ): Promise<XpResult> {
+  // Step 1: Ensure profile exists (outside transaction — upsert is idempotent)
   const profile = await prisma.userProfile.upsert({
     where: { userId },
     update: {},
@@ -143,43 +145,52 @@ export async function awardXp(
   const newTotalXp = profile.xp + amount;
   const newLevel = calculateLevel(newTotalXp);
   const leveledUp = newLevel > oldLevel;
-
-  // Update profile
-  await prisma.userProfile.update({
-    where: { userId },
-    data: { xp: newTotalXp, level: newLevel },
-  });
-
-  // If leveled up, unlock new borders
   const newBorders: string[] = [];
+
+  // Step 2: Collect all border unlocks needed (for multi-level jumps)
+  const bordersToUnlock: typeof BORDER_DEFS[number][] = [];
   if (leveledUp) {
     for (const border of BORDER_DEFS) {
       if (border.requiredLvl > oldLevel && border.requiredLvl <= newLevel) {
-        // Upsert the border definition
-        await prisma.profileBorder.upsert({
-          where: { key: border.key },
-          update: {},
-          create: {
-            key: border.key,
-            name: border.name,
-            description: border.description,
-            cssClass: border.cssClass,
-            requiredLvl: border.requiredLvl,
-            rarity: border.rarity,
-          },
-        });
-        const borderRecord = await prisma.profileBorder.findUnique({ where: { key: border.key } });
-        if (borderRecord) {
-          await prisma.userBorder.upsert({
-            where: { userId_borderId: { userId, borderId: borderRecord.id } },
-            update: {},
-            create: { userId, borderId: borderRecord.id },
-          });
-          newBorders.push(border.name);
-        }
+        bordersToUnlock.push(border);
       }
     }
   }
+
+  // Step 3: Atomic transaction — XP + level + all border unlocks
+  await prisma.$transaction(async (tx) => {
+    // Update XP and level
+    await tx.userProfile.update({
+      where: { userId },
+      data: { xp: newTotalXp, level: newLevel },
+    });
+
+    // Unlock borders for every level crossed (handles multi-level jumps)
+    for (const border of bordersToUnlock) {
+      // Ensure border definition exists
+      const borderRecord = await tx.profileBorder.upsert({
+        where: { key: border.key },
+        update: {},
+        create: {
+          key: border.key,
+          name: border.name,
+          description: border.description,
+          cssClass: border.cssClass,
+          requiredLvl: border.requiredLvl,
+          rarity: border.rarity,
+        },
+      });
+
+      // Unlock for user (idempotent via unique constraint)
+      await tx.userBorder.upsert({
+        where: { userId_borderId: { userId, borderId: borderRecord.id } },
+        update: {},
+        create: { userId, borderId: borderRecord.id },
+      });
+
+      newBorders.push(border.name);
+    }
+  });
 
   return {
     xpGained: amount,
