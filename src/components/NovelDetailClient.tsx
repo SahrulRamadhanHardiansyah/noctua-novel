@@ -108,7 +108,7 @@ export const NovelDetailClient = async ({ slug }: { slug: string }) => {
       <section className="pb-24 -mt-4">
         <div className="container mx-auto px-6 md:px-16 lg:px-36">
           <h2 className="text-3xl font-bold mb-6">Chapter List</h2>
-          <ChapterList chapters={novel.chapters || []} />
+          <ChapterList chapters={novel.chapters || []} novelTitle={novel.title} />
 
           {communityNovelId && (
             <div className="mt-16">

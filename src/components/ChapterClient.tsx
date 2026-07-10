@@ -22,12 +22,6 @@ type ChapterClientProps = {
 
 const fontSizes = ["text-base", "text-lg", "text-xl", "text-2xl"];
 
-// ponytail: strip "Novel Title - " prefix from chapter_full_title
-const getShortTitle = (title: string) => {
-  const idx = title.indexOf(" - ");
-  return idx !== -1 ? title.substring(idx + 3) : title;
-};
-
 const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChapter }: ChapterClientProps) => {
   const scrollKey = `scroll_${novelSlug}_${chapterTitle}`;
   const fontKey = `fontSize_${novelSlug}`;
@@ -169,7 +163,7 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
             <Link href={`/chapter/${prevChapter.slug}`} className="flex-1 min-w-0">
               <Button variant="outline" className="w-full justify-start gap-2 text-left">
                 <ChevronLeft className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate max-w-[150px] sm:max-w-[200px]">{getShortTitle(prevChapter.title)}</span>
+                <span className="truncate max-w-[150px] sm:max-w-[200px]">{prevChapter.title}</span>
               </Button>
             </Link>
           ) : (
@@ -183,7 +177,7 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
           {nextChapter ? (
             <Link href={`/chapter/${nextChapter.slug}`} className="flex-1 min-w-0">
               <Button variant="outline" className="w-full justify-end gap-2 text-right">
-                <span className="truncate max-w-[150px] sm:max-w-[200px]">{getShortTitle(nextChapter.title)}</span>
+                <span className="truncate max-w-[150px] sm:max-w-[200px]">{nextChapter.title}</span>
                 <ChevronRight className="h-4 w-4 flex-shrink-0" />
               </Button>
             </Link>
