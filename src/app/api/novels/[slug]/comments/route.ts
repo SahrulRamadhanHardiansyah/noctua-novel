@@ -19,6 +19,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         orderBy: { createdAt: "desc" },
         skip,
         take: limit,
+        include: {
+          authorProfile: {
+            select: { level: true, equippedTitle: true, equippedBorder: true },
+          },
+        },
       }),
       prisma.comment.count({
         where: { novelSlug: slug },

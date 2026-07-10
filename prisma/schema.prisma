@@ -20,6 +20,13 @@ model UserProfile {
   totalEarnings  Int      @default(0)
   checkInStreak  Int      @default(0)
   lastCheckIn    DateTime?
+
+  // Gamification
+  xp             Int      @default(0)  // Total XP earned
+  level          Int      @default(1)  // Current level
+  equippedTitle  String?  // Currently displayed title/gelar
+  equippedBorder String?  @default("none") // Currently equipped avatar border
+
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -27,7 +34,49 @@ model UserProfile {
   dailyCheckIns        DailyCheckIn[]
   readingMissions      ReadingMissionProgress[]
   userAchievements     UserAchievement[]
+  unlockedBorders      UserBorder[]
+  comments             Comment[]
 
+  @@index([userId])
+  @@index([level])
+}
+
+// ─── Profile Borders (unlockable) ────────────────────────────────────────────
+model ProfileBorder {
+  id          String   @id @default(cuid())
+  key         String   @unique // e.g. "silver_frame", "golden_glow", "violet_aura"
+  name        String
+  description String
+  cssClass    String   // Tailwind classes for the border effect
+  requiredLvl Int      @default(1) // Minimum level to unlock
+  rarity      String   @default("common") // common | rare | epic | legendary
+  createdAt   DateTime @default(now())
+
+  userBorders UserBorder[]
+}
+
+model UserBorder {
+  id        String   @id @default(cuid())
+  userId    String
+  borderId  String
+  unlockedAt DateTime @default(now())
+
+  profile   UserProfile   @relation(fields: [userId], references: [userId])
+  border    ProfileBorder @relation(fields: [borderId], references: [id])
+
+  @@unique([userId, borderId])
+  @@index([userId])
+}
+
+// ─── User Titles (unlockable gelar) ──────────────────────────────────────────
+model UserTitle {
+  id            String   @id @default(cuid())
+  userId        String
+  title         String   // e.g. "The Ancient Reader"
+  source        String   // "achievement:night_owl" | "level:10" | "custom"
+  unlockedAt    DateTime @default(now())
+
+  @@unique([userId, title])
   @@index([userId])
 }
 
@@ -52,6 +101,8 @@ model Comment {
   content        String   @db.Text
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  authorProfile  UserProfile? @relation(fields: [userId], references: [userId])
 
   @@index([novelSlug])
   @@index([userId])
@@ -232,6 +283,9 @@ model Achievement {
   icon        String   // lucide icon name
   category    String   // reading | social | author | streak
   requirement Int      @default(1) // threshold to unlock
+  coinReward  Int      @default(0) // Coins awarded on unlock
+  titleReward String?  // Title/gelar awarded on unlock (e.g. "The Ancient Reader")
+  xpReward    Int      @default(50) // XP awarded on unlock
   createdAt   DateTime @default(now())
 
   userAchievements UserAchievement[]
