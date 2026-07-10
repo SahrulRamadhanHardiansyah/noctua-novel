@@ -34,7 +34,18 @@ export async function generateMetadata({ params }: ChapterPageProps): Promise<Me
 
   return {
     title: `${chapterTitle} - ${readableNovel} | NoctuaNovel`,
-    description: `Read ${chapterTitle} of ${readableNovel} on NoctuaNovel.`,
+    description: `Read ${chapterTitle} of ${readableNovel} on NoctuaNovel. Discover more chapters and novels on NoctuaNovel.`,
+    openGraph: {
+      title: `${chapterTitle} - ${readableNovel}`,
+      description: `Read ${chapterTitle} of ${readableNovel} on NoctuaNovel`,
+      type: "article",
+      siteName: "NoctuaNovel",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${chapterTitle} - ${readableNovel}`,
+      description: `Read ${chapterTitle} of ${readableNovel} on NoctuaNovel`,
+    },
   };
 }
 

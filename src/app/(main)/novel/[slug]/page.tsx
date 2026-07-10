@@ -41,7 +41,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       openGraph: {
         title: novelTitle,
         description: novelSynopsis.slice(0, 160) || `Read ${novelTitle} on NoctuaNovel`,
-        images: novelImage ? [{ url: novelImage }] : [],
+        images: novelImage ? [{ url: novelImage, width: 500, height: 700 }] : [],
+        type: "book",
+        siteName: "NoctuaNovel",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: novelTitle,
+        description: novelSynopsis.slice(0, 160) || `Read ${novelTitle} on NoctuaNovel`,
+        images: novelImage ? [novelImage] : [],
       },
     };
   } catch {

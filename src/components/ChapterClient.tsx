@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Settings, Minus, Plus, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { Settings, Minus, Plus, ArrowLeft, ChevronLeft, ChevronRight, Play, Pause, Square, BookmarkPlus, Volume2, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 import { markChapterAsRead } from "@/lib/utils/reading-history";
 
 type ChapterNavInfo = {
@@ -48,6 +49,130 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
   });
   const [readingProgress, setReadingProgress] = useState(0);
   const router = useRouter();
+
+  // TTS State
+  const [ttsState, setTtsState] = useState<"idle" | "playing" | "paused">("idle");
+  const [ttsRate, setTtsRate] = useState(1);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  // Bookmark State
+  const [showBookmarkDialog, setShowBookmarkDialog] = useState(false);
+  const [bookmarkNote, setBookmarkNote] = useState("");
+  const [selectedText, setSelectedText] = useState("");
+  const [bookmarks, setBookmarks] = useState<any[]>([]);
+
+  // Load bookmarks on mount
+  useEffect(() => {
+    if (!chapterSlug) return;
+    try {
+      const stored = localStorage.getItem(`bookmarks_${chapterSlug}`);
+      if (stored) setBookmarks(JSON.parse(stored));
+    } catch {}
+  }, [chapterSlug]);
+
+  // TTS Functions
+  const speak = useCallback(() => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const text = content.replace(/!\[.*?\]\(.*?\)/g, "").replace(/[#*_~`>]/g, "");
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = ttsRate;
+    utterance.lang = "en-US";
+    utterance.onend = () => setTtsState("idle");
+    utterance.onerror = () => setTtsState("idle");
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+    setTtsState("playing");
+  }, [content, ttsRate]);
+
+  const pauseTts = useCallback(() => {
+    window.speechSynthesis?.pause();
+    setTtsState("paused");
+  }, []);
+
+  const resumeTts = useCallback(() => {
+    window.speechSynthesis?.resume();
+    setTtsState("playing");
+  }, []);
+
+  const stopTts = useCallback(() => {
+    window.speechSynthesis?.cancel();
+    setTtsState("idle");
+  }, []);
+
+  // Cleanup TTS on unmount
+  useEffect(() => {
+    return () => { window.speechSynthesis?.cancel(); };
+  }, []);
+
+  // Bookmark Functions
+  const handleTextSelect = useCallback(() => {
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim().length > 0) {
+      setSelectedText(selection.toString().trim());
+    }
+  }, []);
+
+  const saveBookmark = useCallback(() => {
+    if (!chapterSlug) return;
+    const bm = {
+      id: Date.now().toString(),
+      chapterSlug,
+      novelSlug,
+      selectedText: selectedText || null,
+      note: bookmarkNote || null,
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [...bookmarks, bm];
+    setBookmarks(updated);
+    localStorage.setItem(`bookmarks_${chapterSlug}`, JSON.stringify(updated));
+    setShowBookmarkDialog(false);
+    setBookmarkNote("");
+    setSelectedText("");
+    toast.success("Bookmark saved!");
+  }, [chapterSlug, novelSlug, selectedText, bookmarkNote, bookmarks]);
+
+  const deleteBookmark = useCallback((id: string) => {
+    if (!chapterSlug) return;
+    const updated = bookmarks.filter((b) => b.id !== id);
+    setBookmarks(updated);
+    localStorage.setItem(`bookmarks_${chapterSlug}`, JSON.stringify(updated));
+    toast.info("Bookmark removed");
+  }, [chapterSlug, bookmarks]);
+
+  // Offline Download
+  const downloadForOffline = useCallback(() => {
+    try {
+      const chapterData = {
+        title: chapterTitle,
+        content,
+        novelSlug,
+        chapterSlug,
+        downloadedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(`offline_chapter_${chapterSlug}`, JSON.stringify(chapterData));
+      // Also tell the service worker to cache this page
+      if (navigator.serviceWorker?.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: "CACHE_CHAPTER",
+          url: window.location.href,
+        });
+      }
+      toast.success("Chapter saved for offline reading!");
+    } catch {
+      toast.error("Failed to save chapter offline");
+    }
+  }, [chapterTitle, content, novelSlug, chapterSlug]);
+
+  // Trigger achievement check on chapter read
+  useEffect(() => {
+    if (!chapterSlug) return;
+    fetch("/api/achievements", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trigger: "chapter_read", value: 1 }),
+    }).catch(() => {});
+  }, [chapterSlug]);
 
   // Restore scroll position on mount
   useEffect(() => {
@@ -157,6 +282,44 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
 
           <h1 className="text-lg font-semibold text-white text-center flex-grow mx-4">{chapterTitle}</h1>
 
+          <div className="flex items-center gap-1">
+            {/* Bookmark button */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setShowBookmarkDialog(true)}
+              aria-label="Add bookmark"
+            >
+              <BookmarkPlus className="h-4 w-4" />
+            </Button>
+
+            {/* Download for offline */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={downloadForOffline}
+              aria-label="Download for offline"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+
+            {/* TTS button */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={ttsState === "idle" ? speak : ttsState === "playing" ? pauseTts : resumeTts}
+              aria-label="Text to speech"
+            >
+              {ttsState === "idle" ? <Volume2 className="h-4 w-4" /> : ttsState === "playing" ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            </Button>
+
+            {ttsState !== "idle" && (
+              <Button variant="outline" size="icon" onClick={stopTts} aria-label="Stop reading">
+                <Square className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild={false}>
               <Button variant="outline" size="icon" aria-label="Reading settings">
@@ -197,11 +360,100 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
                   ))}
                 </div>
               </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="font-normal">Reading Speed</DropdownMenuLabel>
+                <div className="flex items-center justify-between px-2 py-1.5">
+                  {[0.5, 0.75, 1, 1.25, 1.5, 2].map((rate) => (
+                    <button
+                      key={rate}
+                      onClick={() => {
+                        setTtsRate(rate);
+                        if (ttsState !== "idle" && utteranceRef.current) {
+                          window.speechSynthesis?.cancel();
+                          setTtsState("idle");
+                        }
+                      }}
+                      className={`px-2 py-1 rounded text-xs transition-colors cursor-pointer ${
+                        ttsRate === rate
+                          ? "bg-violet-600 text-white"
+                          : "text-zinc-400 hover:bg-zinc-800"
+                      }`}
+                    >
+                      {rate}x
+                    </button>
+                  ))}
+                </div>
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
 
-        <article className={`w-full max-w-4xl mx-auto leading-loose transition-all duration-200 ${fontSizes[fontSizeIndex]} ${fontFamilies[fontFamilyIndex].className}`}>{formattedContent}</article>
+        <article
+          onMouseUp={handleTextSelect}
+          className={`w-full max-w-4xl mx-auto leading-loose transition-all duration-200 ${fontSizes[fontSizeIndex]} ${fontFamilies[fontFamilyIndex].className}`}
+        >
+          {formattedContent}
+        </article>
+
+        {/* Bookmark Dialog */}
+        {showBookmarkDialog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+              <h3 className="text-lg font-semibold text-white mb-4">Save Bookmark</h3>
+              {selectedText && (
+                <div className="mb-4 p-3 bg-zinc-800/50 rounded-lg border border-white/[0.06]">
+                  <p className="text-xs text-zinc-500 mb-1">Selected text:</p>
+                  <p className="text-sm text-zinc-300 line-clamp-3 italic">&ldquo;{selectedText}&rdquo;</p>
+                </div>
+              )}
+              <textarea
+                value={bookmarkNote}
+                onChange={(e) => setBookmarkNote(e.target.value)}
+                placeholder="Add a note (optional)..."
+                className="w-full bg-zinc-800/50 border border-white/[0.08] rounded-lg p-3 text-white text-sm resize-none h-20 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+              />
+              <div className="flex justify-end gap-3 mt-4">
+                <Button variant="outline" onClick={() => { setShowBookmarkDialog(false); setSelectedText(""); }}>
+                  Cancel
+                </Button>
+                <Button onClick={saveBookmark}>
+                  Save
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bookmarks List */}
+        {bookmarks.length > 0 && (
+          <div className="w-full max-w-4xl mx-auto mt-8 mb-4">
+            <h3 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">
+              Bookmarks ({bookmarks.length})
+            </h3>
+            <div className="space-y-2">
+              {bookmarks.map((bm) => (
+                <div key={bm.id} className="bg-zinc-900/50 border border-white/[0.06] rounded-lg p-3 flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    {bm.selectedText && (
+                      <p className="text-sm text-zinc-300 line-clamp-2 italic">&ldquo;{bm.selectedText}&rdquo;</p>
+                    )}
+                    {bm.note && <p className="text-xs text-zinc-500 mt-1">{bm.note}</p>}
+                    <p className="text-[10px] text-zinc-600 mt-1">
+                      {new Date(bm.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => deleteBookmark(bm.id)}
+                    className="text-zinc-600 hover:text-red-400 transition cursor-pointer text-xs flex-shrink-0"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Chapter Navigation */}
         <div className="flex justify-between items-center mt-12 pb-20 max-w-4xl mx-auto gap-4">

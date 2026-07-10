@@ -23,9 +23,10 @@ model UserProfile {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  coinTransactions CoinTransaction[]
-  dailyCheckIns    DailyCheckIn[]
-  readingMissions  ReadingMissionProgress[]
+  coinTransactions     CoinTransaction[]
+  dailyCheckIns        DailyCheckIn[]
+  readingMissions      ReadingMissionProgress[]
+  userAchievements     UserAchievement[]
 
   @@index([userId])
 }
@@ -99,6 +100,8 @@ model UserChapter {
   autoSaves      ChapterAutoSave[]
 
   @@index([novelId])
+  @@index([novelId, orderIndex])
+  @@index([isDraft])
 }
 
 // ─── Chapter Auto-Save ────────────────────────────────────────────────────────
@@ -217,5 +220,77 @@ model ReadingMissionProgress {
   profile   UserProfile @relation(fields: [userId], references: [userId])
 
   @@unique([userId, missionId])
+  @@index([userId])
+}
+
+// ─── Achievement / Badge System ──────────────────────────────────────────────
+model Achievement {
+  id          String   @id @default(cuid())
+  key         String   @unique // e.g. "night_owl", "marathon_reader", "first_review"
+  title       String
+  description String
+  icon        String   // lucide icon name
+  category    String   // reading | social | author | streak
+  requirement Int      @default(1) // threshold to unlock
+  createdAt   DateTime @default(now())
+
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+  progress      Int      @default(0)
+
+  profile       UserProfile @relation(fields: [userId], references: [userId])
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+// ─── Bookmarks & Annotations ─────────────────────────────────────────────────
+model Bookmark {
+  id             String   @id @default(cuid())
+  userId         String
+  chapterSlug    String
+  novelSlug      String
+  label          String?  // user-given label
+  paragraphIndex Int?     // specific paragraph, null = whole chapter
+  highlightText  String?  @db.Text // selected text
+  note           String?  @db.Text // user annotation
+  color          String   @default("#8b5cf6") // highlight color
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId, novelSlug])
+  @@index([userId, chapterSlug])
+}
+
+// ─── Reading Progress Tracking ───────────────────────────────────────────────
+model ReadingProgress {
+  id             String   @id @default(cuid())
+  userId         String
+  chapterSlug    String
+  novelSlug      String
+  scrollPosition Float    @default(0) // percentage 0-100
+  completed      Boolean  @default(false)
+  lastReadAt     DateTime @default(now())
+
+  @@unique([userId, chapterSlug])
+  @@index([userId, novelSlug])
+  @@index([novelSlug])
+}
+
+// ─── Chapter View Analytics ──────────────────────────────────────────────────
+model ChapterView {
+  id         String   @id @default(cuid())
+  chapterId  String
+  userId     String?  // null for anonymous
+  viewedAt   DateTime @default(now())
+
+  @@index([chapterId, viewedAt])
   @@index([userId])
 }
