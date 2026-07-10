@@ -95,6 +95,12 @@ export default function ReviewSection({ novelId }: { novelId: string }) {
       });
       if (res.ok) {
         toast.success(userReview ? "Review updated!" : "Review submitted!");
+        // Trigger achievement check
+        fetch("/api/achievements", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ trigger: "review_posted", value: 1 }),
+        }).catch(() => {});
         setShowForm(false);
         setForm({ rating: 5, title: "", content: "" });
         await fetchReviews();

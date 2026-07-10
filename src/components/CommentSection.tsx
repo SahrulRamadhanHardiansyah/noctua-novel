@@ -57,6 +57,12 @@ export const CommentSection = ({ novelSlug }: { novelSlug: string }) => {
       if (response.ok) {
         setNewComment("");
         await fetchComments();
+        // Trigger achievement check
+        fetch("/api/achievements", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ trigger: "comment_posted", value: 1 }),
+        }).catch(() => {});
       } else {
         const data = await response.json();
         toast.error(data.error || "Failed to submit comment");

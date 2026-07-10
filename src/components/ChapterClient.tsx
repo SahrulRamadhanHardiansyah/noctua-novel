@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Settings, Minus, Plus, ArrowLeft, ChevronLeft, ChevronRight, Play, Pause, Square, BookmarkPlus, Volume2 } from "lucide-react";
+import { Settings, Minus, Plus, ArrowLeft, ChevronLeft, ChevronRight, Play, Pause, Square, BookmarkPlus, Volume2, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -140,6 +140,40 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
     toast.info("Bookmark removed");
   }, [chapterSlug, bookmarks]);
 
+  // Offline Download
+  const downloadForOffline = useCallback(() => {
+    try {
+      const chapterData = {
+        title: chapterTitle,
+        content,
+        novelSlug,
+        chapterSlug,
+        downloadedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(`offline_chapter_${chapterSlug}`, JSON.stringify(chapterData));
+      // Also tell the service worker to cache this page
+      if (navigator.serviceWorker?.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: "CACHE_CHAPTER",
+          url: window.location.href,
+        });
+      }
+      toast.success("Chapter saved for offline reading!");
+    } catch {
+      toast.error("Failed to save chapter offline");
+    }
+  }, [chapterTitle, content, novelSlug, chapterSlug]);
+
+  // Trigger achievement check on chapter read
+  useEffect(() => {
+    if (!chapterSlug) return;
+    fetch("/api/achievements", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trigger: "chapter_read", value: 1 }),
+    }).catch(() => {});
+  }, [chapterSlug]);
+
   // Restore scroll position on mount
   useEffect(() => {
     const saved = localStorage.getItem(scrollKey);
@@ -257,6 +291,16 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
               aria-label="Add bookmark"
             >
               <BookmarkPlus className="h-4 w-4" />
+            </Button>
+
+            {/* Download for offline */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={downloadForOffline}
+              aria-label="Download for offline"
+            >
+              <Download className="h-4 w-4" />
             </Button>
 
             {/* TTS button */}
