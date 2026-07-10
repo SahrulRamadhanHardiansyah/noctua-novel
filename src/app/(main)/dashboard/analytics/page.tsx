@@ -12,6 +12,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AnalyticsCharts from "@/components/dashboard/AnalyticsCharts";
 
 export default async function AnalyticsPage() {
   const { userId } = await auth();
@@ -167,6 +168,29 @@ export default async function AnalyticsPage() {
             </table>
           </div>
         )}
+
+        {/* Visual Charts */}
+        <AnalyticsCharts
+          novels={novels.map((novel) => ({
+            novelId: novel.id,
+            title: novel.title,
+            viewCount: novel.viewCount,
+            chapterCount: novel._count.chapters,
+            favoriteCount: favMap[novel.slug] ?? 0,
+            avgRating: novel.reviews.length > 0
+              ? novel.reviews.reduce((s, r) => s + r.rating, 0) / novel.reviews.length
+              : 0,
+          }))}
+          overview={{
+            totalNovels: novels.length,
+            totalChapters,
+            totalViews: views,
+            totalFavorites: totalFavs,
+            totalReviews: novels.reduce((s, n) => s + n._count.reviews, 0),
+            avgRating: novels.length > 0 ? novels.reduce((s, n) => s + (n.reviews.length > 0 ? n.reviews.reduce((r, v) => r + v.rating, 0) / n.reviews.length : 0), 0) / novels.length : 0,
+            totalEarnings: earnings,
+          }}
+        />
       </div>
     </div>
   );

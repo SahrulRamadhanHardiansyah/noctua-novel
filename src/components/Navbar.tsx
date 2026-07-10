@@ -3,7 +3,7 @@
 import React, { useState, FormEvent, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { MenuIcon, SearchIcon, TicketPlus, XIcon, BookOpen, Coins, PenTool } from "lucide-react";
+import { MenuIcon, SearchIcon, TicketPlus, XIcon, BookOpen, Coins, PenTool, Trophy } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 import { getSlugFromUrl } from "@/lib/utils/slug";
 import Image from "next/image";
@@ -219,6 +219,7 @@ export default function Navbar() {
                 <UserButton.Action label="My Dashboard" labelIcon={<BookOpen className="w-4 h-4" />} onClick={() => handleLinkClick("/dashboard")} />
                 <UserButton.Action label="My Favorite" labelIcon={<TicketPlus width={15} />} onClick={() => handleLinkClick("/favorite")} />
                 <UserButton.Action label="Coins" labelIcon={<Coins className="w-4 h-4" />} onClick={() => handleLinkClick("/coins")} />
+                <UserButton.Action label="Achievements" labelIcon={<Trophy className="w-4 h-4" />} onClick={() => handleLinkClick("/achievements")} />
               </UserButton.MenuItems>
             </UserButton>
           </div>
