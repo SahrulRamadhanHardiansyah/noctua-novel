@@ -9,6 +9,7 @@ import { getSlugFromUrl } from "@/lib/utils/slug";
 import Image from "next/image";
 import NotificationBell from "@/components/NotificationBell";
 import CoinBalance from "@/components/CoinBalance";
+import XpBadge from "@/components/XpBadge";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -211,6 +212,7 @@ export default function Navbar() {
           <button onClick={() => openSignIn()} className="px-4 py-1 sm:px-7 sm:py-2 bg-violet-600 hover:bg-violet-500 text-white transition rounded-full font-medium cursor-pointer">Login</button>
         ) : (
           <div className="flex items-center gap-4">
+            <XpBadge />
             <CoinBalance />
             <NotificationBell />
 

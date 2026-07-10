@@ -103,7 +103,9 @@ export const CommentSection = ({ novelSlug }: { novelSlug: string }) => {
           body: JSON.stringify({ trigger: "comment_posted" }),
         }).then(r => r.ok ? r.json() : null).then(data => {
           if (data?.leveledUp) {
-            toast.success(`🎉 Level Up! You are now Level ${data.newLevel}!`, { duration: 5000 });
+            window.dispatchEvent(new CustomEvent("noctua-level-up", {
+              detail: { oldLevel: data.oldLevel, newLevel: data.newLevel, newBorders: data.newBorders || [] },
+            }));
           }
         }).catch(() => {});
       } else {

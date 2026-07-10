@@ -24,18 +24,27 @@ export default function QuoteExportModal({
     if (!cardRef.current) return;
     setIsExporting(true);
     try {
+      // Wait for fonts to load before rendering
+      await document.fonts.ready;
       const html2canvas = (await import("html2canvas-pro")).default;
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 2,
-        backgroundColor: null,
+      const el = cardRef.current;
+      const canvas = await html2canvas(el, {
+        scale: 3, // 3x for crisp high-DPI output
+        backgroundColor: "#0f0f12", // Explicit background to prevent transparency
         useCORS: true,
+        allowTaint: true,
+        logging: false,
+        width: el.offsetWidth,
+        height: el.offsetHeight,
+        windowWidth: el.scrollWidth,
+        windowHeight: el.scrollHeight,
       });
       const link = document.createElement("a");
       link.download = `noctua-quote-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.href = canvas.toDataURL("image/png", 1.0);
       link.click();
       toast.success("Quote image downloaded!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to export image");
     } finally {
       setIsExporting(false);

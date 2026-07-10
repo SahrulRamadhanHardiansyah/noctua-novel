@@ -188,10 +188,10 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
       body: JSON.stringify({ trigger: "chapter_read" }),
     }).then(r => r.ok ? r.json() : null).then(data => {
       if (data?.leveledUp) {
-        toast.success(`🎉 Level Up! You are now Level ${data.newLevel}!`, { duration: 5000 });
-        if (data.newBorders?.length > 0) {
-          toast.info(`New border unlocked: ${data.newBorders.join(", ")}!`, { duration: 4000 });
-        }
+        // Dispatch celebration event for LevelUpCelebration component
+        window.dispatchEvent(new CustomEvent("noctua-level-up", {
+          detail: { oldLevel: data.oldLevel, newLevel: data.newLevel, newBorders: data.newBorders || [] },
+        }));
       }
     }).catch(() => {});
   }, [chapterSlug]);
