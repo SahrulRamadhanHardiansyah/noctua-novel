@@ -4,6 +4,7 @@ import ChapterClient from "@/components/ChapterClient";
 import { NovelDetail } from "@/types";
 import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
+import { formatChapterTitle } from "@/lib/utils/chapter";
 
 type ChapterPageProps = {
   params: Promise<{ slug: string }>;
@@ -44,6 +45,7 @@ const Page = async ({ params }: ChapterPageProps) => {
   let chapterTitle = "";
   let content = "";
   let novelSlug = "";
+  let novelTitle = "";
   let prevChapter = null;
   let nextChapter = null;
 
@@ -69,6 +71,7 @@ const Page = async ({ params }: ChapterPageProps) => {
     chapterTitle = dbChapter.title;
     content = dbChapter.content;
     novelSlug = `community-${dbChapter.novel.slug}`;
+    novelTitle = dbChapter.novel.title;
 
     const chapters = dbChapter.novel.chapters;
     const currentIndex = chapters.findIndex((ch) => ch.id === dbChapter.id);
@@ -92,18 +95,22 @@ const Page = async ({ params }: ChapterPageProps) => {
     chapterTitle = chapterData.chapter_title;
     content = chapterData.content;
     novelSlug = chapterSlug.substring(0, chapterSlug.lastIndexOf("-chapter-"));
+    novelTitle = novelSlug.replace(/-/g, " "); // rough fallback
 
     try {
       const novelDetail: NovelDetail = await getNovelResponse(`novel/${novelSlug}`);
+      if (novelDetail?.title) {
+        novelTitle = novelDetail.title;
+      }
       if (novelDetail?.chapters) {
         const currentIndex = novelDetail.chapters.findIndex((ch) => ch.slug === chapterSlug);
         if (currentIndex > 0) {
           const prev = novelDetail.chapters[currentIndex - 1];
-          prevChapter = { slug: prev.slug, title: prev.chapter_full_title };
+          prevChapter = { slug: prev.slug, title: formatChapterTitle(prev.chapter_full_title, novelTitle) };
         }
         if (currentIndex >= 0 && currentIndex < novelDetail.chapters.length - 1) {
           const next = novelDetail.chapters[currentIndex + 1];
-          nextChapter = { slug: next.slug, title: next.chapter_full_title };
+          nextChapter = { slug: next.slug, title: formatChapterTitle(next.chapter_full_title, novelTitle) };
         }
       }
     } catch {
@@ -111,9 +118,12 @@ const Page = async ({ params }: ChapterPageProps) => {
     }
   }
 
+  // Format the header title too
+  const displayTitle = formatChapterTitle(chapterTitle, novelTitle);
+
   return (
     <ChapterClient
-      chapterTitle={chapterTitle}
+      chapterTitle={displayTitle}
       content={content}
       novelSlug={novelSlug}
       prevChapter={prevChapter}

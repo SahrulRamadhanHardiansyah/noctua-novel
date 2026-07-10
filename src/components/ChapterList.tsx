@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { BookOpen, Search, ArrowDownAZ, ArrowUpZA } from "lucide-react";
 import { Button } from "./ui/button";
+import { formatChapterTitle } from "@/lib/utils/chapter";
 
 type Chapter = {
   slug: string;
@@ -13,15 +14,10 @@ type Chapter = {
 
 type ChapterListProps = {
   chapters: Chapter[];
+  novelTitle?: string;
 };
 
-// ponytail: strip "Novel Title - " prefix from API's chapter_full_title
-const getShortTitle = (fullTitle: string) => {
-  const dashIdx = fullTitle.indexOf(" - ");
-  return dashIdx !== -1 ? fullTitle.substring(dashIdx + 3) : fullTitle;
-};
-
-export const ChapterList = ({ chapters }: ChapterListProps) => {
+export const ChapterList = ({ chapters, novelTitle }: ChapterListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -36,19 +32,9 @@ export const ChapterList = ({ chapters }: ChapterListProps) => {
       );
     }
 
-    // Sort
-    result.sort((a, b) => {
-      // Simplistic sort assuming original array is chronological or reverse-chronological
-      // You might need to parse chapter numbers if the API doesn't guarantee order
-      return sortOrder === "asc" ? 1 : -1;
-    });
-
-    // We reverse if the requested sort order doesn't match the original order.
-    // Assuming the API returns latest first (desc). If it returns first chapter first (asc), swap this logic.
-    // Actually, safer approach:
-    const originalIsDesc = true; // adjust based on your API
-    if ((sortOrder === "asc" && originalIsDesc) || (sortOrder === "desc" && !originalIsDesc)) {
-       result.reverse();
+    // Sort: simply reverse the original order since API returns desc
+    if (sortOrder === "asc") {
+      result.reverse();
     }
 
     return result;
@@ -96,7 +82,7 @@ export const ChapterList = ({ chapters }: ChapterListProps) => {
                   <div className="flex items-center gap-3">
                     <BookOpen className="w-5 h-5 text-gray-100" />{" "}
                     <span className="font-medium text-gray-200">
-                      {getShortTitle(chapter.chapter_full_title)}
+                      {formatChapterTitle(chapter.chapter_full_title, novelTitle)}
                     </span>
                   </div>
                   <span className="text-sm text-gray-400">
@@ -108,7 +94,7 @@ export const ChapterList = ({ chapters }: ChapterListProps) => {
           </ul>
         ) : (
           <div className="p-8 text-center text-gray-400">
-            No chapters found matching "{searchQuery}"
+            No chapters found matching &quot;{searchQuery}&quot;
           </div>
         )}
       </div>
