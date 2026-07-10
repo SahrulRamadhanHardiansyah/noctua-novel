@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,26 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "Noctua Novel",
-  description: "A Novel Web Application that helps you to read a novels.",
+  description: "Read and discover light novels, web novels, and community stories. A premium reading platform for novel enthusiasts.",
+  manifest: "/manifest.json",
+  themeColor: "#8b5cf6",
+  openGraph: {
+    title: "Noctua Novel",
+    description: "Read and discover light novels, web novels, and community stories",
+    siteName: "NoctuaNovel",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Noctua Novel",
+    description: "Read and discover light novels, web novels, and community stories",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#8b5cf6",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +40,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <body className={cn("min-h-screen bg-background font-sans antialiased", outfit.className)}>
           {children}
           <Toaster richColors position="top-center" />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if ('serviceWorker' in navigator) {
+                  window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').catch(() => {});
+                  });
+                }
+              `,
+            }}
+          />
         </body>
       </html>
     </ClerkProvider>
