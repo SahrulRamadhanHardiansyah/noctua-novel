@@ -47,7 +47,7 @@ export default function Navbar() {
           setLiveResults(Array.isArray(data) ? data.slice(0, 5) : []);
         }
       } catch (error) {
-        console.error("Live search failed", error);
+        // non-critical: search degrades silently
       } finally {
         setIsSearching(false);
       }
@@ -104,6 +104,7 @@ export default function Navbar() {
           <a href="#latest" onClick={(e) => handleScrollOrNavigate(e, "latest")}>Latest</a>
           <a href="#editors-choice" onClick={(e) => handleScrollOrNavigate(e, "editors-choice")}>Editor&apos;s Choice</a>
           <a href="#recommendation" onClick={(e) => handleScrollOrNavigate(e, "recommendation")}>Recommendation</a>
+          <a href="#community-originals" onClick={(e) => handleScrollOrNavigate(e, "community-originals")}>Community</a>
           {user && <Link href="/favorite" onClick={() => handleLinkClick("/favorite")}>Favorite</Link>}
           {user && (
             <Link href="/dashboard" onClick={() => setIsOpen(false)} className="md:hidden flex items-center gap-2">
@@ -137,7 +138,14 @@ export default function Navbar() {
                         {novel.image_url && <Image src={`/api/proxy-image?url=${encodeURIComponent(novel.image_url)}`} alt="" fill unoptimized className="object-cover rounded-sm" />}
                       </div>
                       <div className="flex-col min-w-0">
-                        <p className="text-sm font-medium text-white truncate w-full">{novel.title}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium text-white truncate">{novel.title}</p>
+                          {novel.isCommunity && (
+                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-300 flex-shrink-0">
+                              Community
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs text-zinc-500 truncate w-full">{novel.genres?.join(", ")}</p>
                       </div>
                     </Link>
@@ -171,7 +179,14 @@ export default function Navbar() {
                           {novel.image_url && <Image src={`/api/proxy-image?url=${encodeURIComponent(novel.image_url)}`} alt="" fill unoptimized className="object-cover" />}
                         </div>
                         <div className="flex-col min-w-0 flex-1">
-                          <p className="text-sm font-semibold text-white truncate w-full">{novel.title}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-white truncate">{novel.title}</p>
+                            {novel.isCommunity && (
+                              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-300 flex-shrink-0">
+                                Community
+                              </span>
+                            )}
+                          </div>
                           {novel.genres && <p className="text-xs text-zinc-500 truncate w-full mt-1">{novel.genres.slice(0, 3).join(", ")}</p>}
                         </div>
                       </Link>

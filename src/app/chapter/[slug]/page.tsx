@@ -126,6 +126,7 @@ const Page = async ({ params }: ChapterPageProps) => {
       chapterTitle={displayTitle}
       content={content}
       novelSlug={novelSlug}
+      chapterSlug={chapterSlug}
       prevChapter={prevChapter}
       nextChapter={nextChapter}
     />

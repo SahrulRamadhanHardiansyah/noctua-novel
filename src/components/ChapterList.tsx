@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { BookOpen, Search, ArrowDownAZ, ArrowUpZA } from "lucide-react";
+import { BookOpen, Search, ArrowDownAZ, ArrowUpZA, Check } from "lucide-react";
 import { Button } from "./ui/button";
 import { formatChapterTitle } from "@/lib/utils/chapter";
+import { isChapterInSet, getReadChapters } from "@/lib/utils/reading-history";
 
 type Chapter = {
   slug: string;
@@ -20,6 +21,12 @@ type ChapterListProps = {
 export const ChapterList = ({ chapters, novelTitle }: ChapterListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [readSet, setReadSet] = useState<Set<string>>(new Set());
+
+  // Load read chapters on mount
+  useEffect(() => {
+    setReadSet(new Set(getReadChapters()));
+  }, []);
 
   const filteredAndSortedChapters = useMemo(() => {
     let result = [...chapters];
@@ -73,24 +80,33 @@ export const ChapterList = ({ chapters, novelTitle }: ChapterListProps) => {
       <div className="bg-gray-900/50 rounded-lg max-h-[60vh] overflow-y-auto scrollbar-hide">
         {filteredAndSortedChapters.length > 0 ? (
           <ul className="divide-y divide-gray-700/50">
-            {filteredAndSortedChapters.map((chapter) => (
-              <li key={chapter.slug}>
-                <Link
-                  href={`/chapter/${chapter.slug}`}
-                  className="flex justify-between items-center p-4 hover:bg-gray-800/60 transition-colors duration-200"
-                >
-                  <div className="flex items-center gap-3">
-                    <BookOpen className="w-5 h-5 text-gray-100" />{" "}
-                    <span className="font-medium text-gray-200">
-                      {formatChapterTitle(chapter.chapter_full_title, novelTitle)}
+            {filteredAndSortedChapters.map((chapter) => {
+              const isRead = isChapterInSet(chapter.slug, readSet);
+              return (
+                <li key={chapter.slug}>
+                  <Link
+                    href={`/chapter/${chapter.slug}`}
+                    className={`flex justify-between items-center p-4 hover:bg-gray-800/60 transition-colors duration-200 ${
+                      isRead ? "opacity-60" : ""
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      {isRead ? (
+                        <Check className="w-4 h-4 text-green-500/70 flex-shrink-0" />
+                      ) : (
+                        <BookOpen className="w-5 h-5 text-gray-100 flex-shrink-0" />
+                      )}
+                      <span className={`font-medium ${isRead ? "text-gray-500" : "text-gray-200"}`}>
+                        {formatChapterTitle(chapter.chapter_full_title, novelTitle)}
+                      </span>
+                    </div>
+                    <span className="text-sm text-gray-400">
+                      {chapter.release_date}
                     </span>
-                  </div>
-                  <span className="text-sm text-gray-400">
-                    {chapter.release_date}
-                  </span>
-                </Link>
-              </li>
-            ))}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <div className="p-8 text-center text-gray-400">

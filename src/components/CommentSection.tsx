@@ -32,7 +32,7 @@ export const CommentSection = ({ novelSlug }: { novelSlug: string }) => {
         setComments(data.comments ?? data);
       }
     } catch (error) {
-      console.error("Failed to fetch comments:", error);
+      toast.error("Failed to load comments");
     } finally {
       setIsFetching(false);
     }
@@ -59,7 +59,7 @@ export const CommentSection = ({ novelSlug }: { novelSlug: string }) => {
         await fetchComments();
       } else {
         const data = await response.json();
-        console.error("Failed to submit comment:", data.error);
+        toast.error(data.error || "Failed to submit comment");
       }
     } catch {
       toast.error("Failed to submit comment");

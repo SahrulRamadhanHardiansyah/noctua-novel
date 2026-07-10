@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Coins } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function CoinBalance() {
   const [balance, setBalance] = useState<number | null>(null);
@@ -18,7 +19,9 @@ export default function CoinBalance() {
           const data = await res.json();
           setBalance(data.balance ?? 0);
         }
-      } catch {}
+      } catch {
+        // non-critical: balance degrades silently
+      }
     };
     fetchBalance();
     // ponytail: poll every 60s, faster refresh if needed later

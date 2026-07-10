@@ -35,7 +35,7 @@ export default function InlineComments({
     fetch(`/api/inline-comments?chapterId=${chapterId}`)
       .then((r) => (r.ok ? r.json() : {}))
       .then(setComments)
-      .catch(() => {});
+      .catch(() => toast.error("Failed to load inline comments"));
   }, [chapterId]);
 
   const handleSubmit = async (paragraphIndex: number) => {
