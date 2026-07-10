@@ -24,13 +24,13 @@ const CommunityNovelsSection = ({ novels }: CommunityNovelsSectionProps) => {
   if (novels.length === 0) return null;
 
   return (
-    <div className="bg-[#09090b] text-white py-16 md:py-24">
-      <div className="container mx-auto px-6 md:px-16 lg:px-36">
-        <div className="flex items-center gap-3 mb-8">
-          <Users className="w-7 h-7 text-violet-400" />
-          <h2 className="text-3xl md:text-4xl font-bold">Community Originals</h2>
+    <div className="bg-[#09090b] text-white py-10 sm:py-16 md:py-24">
+      <div className="container mx-auto px-4 sm:px-6 md:px-16 lg:px-36">
+        <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+          <Users className="w-5 h-5 sm:w-7 sm:h-7 text-violet-400" />
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Community Originals</h2>
         </div>
-        <p className="text-gray-400 mb-10 max-w-2xl">
+        <p className="text-sm sm:text-base text-gray-400 mb-6 sm:mb-10 max-w-2xl">
           Original stories written by our community authors. Support indie creators and discover fresh voices.
         </p>
 

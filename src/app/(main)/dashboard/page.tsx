@@ -53,32 +53,32 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-6 md:px-16 lg:px-36">
+    <div className="bg-[#09090b] text-white min-h-screen pt-20 sm:pt-24 pb-10 sm:pb-16">
+      <div className="container mx-auto px-4 sm:px-6 md:px-16 lg:px-36">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 md:mb-10">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
               Welcome back, {user?.firstName || "Author"} ✨
             </h1>
-            <p className="text-zinc-500">
+            <p className="text-sm sm:text-base text-zinc-500">
               Manage your novels, track performance, and grow your readership.
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             <Link href="/dashboard/analytics">
-              <Button variant="secondary" className="gap-2">
-                <BarChart3 className="w-4 h-4" /> Analytics
+              <Button variant="secondary" size="sm" className="gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Analytics
               </Button>
             </Link>
             <Link href="/dashboard/customize">
-              <Button variant="secondary" className="gap-2">
-                <Palette className="w-4 h-4" /> Customize
+              <Button variant="secondary" size="sm" className="gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Customize
               </Button>
             </Link>
             <Link href="/dashboard/create-novel">
-              <Button className="gap-2 shadow-lg hover:shadow-primary/20 transition-all">
-                <PlusCircle className="w-4 h-4" /> Create Novel
+              <Button size="sm" className="gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                <PlusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Create Novel
               </Button>
             </Link>
           </div>
