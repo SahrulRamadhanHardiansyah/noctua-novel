@@ -41,11 +41,11 @@ const HeroSection = () => {
           In a Victorian world of steam, dreadnoughts, and occult horrors, Zhou Mingrui awakens as Klein Moretti. He walks a razor&apos;s edge between light and darkness, entangled with warring Churches. This is the legend of unlimited
           potential…and unspeakable danger.
         </p>
-        <button onClick={handleExploreClick} className="flex items-center gap-1 px-6 py-3 text-sm bg-gray-100 hover:bg-gray-400 transition rounded-full font-medium cursor-pointer">
+        <button onClick={handleExploreClick} className="flex items-center gap-1 px-6 py-3 text-sm bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-500/20 transition rounded-full font-medium cursor-pointer">
           Explore Novel <ArrowRightIcon className="w-5 h-5" />
         </button>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-[#09090b] to-transparent pointer-events-none"></div>
     </div>
   );
 };

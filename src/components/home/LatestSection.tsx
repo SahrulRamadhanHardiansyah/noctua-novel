@@ -8,7 +8,7 @@ type LatestSectionProps = {
 
 const LatestSection = ({ apiData }: LatestSectionProps) => {
   return (
-    <div className="bg-black text-white py-16 md:py-24">
+    <div className="bg-[#09090b] text-white py-16 md:py-24">
       <div className="container mx-auto px-6 md:px-16 lg:px-36">
         <h2 className="text-3xl md:text-4xl font-bold mb-8">Latest Release</h2>
 

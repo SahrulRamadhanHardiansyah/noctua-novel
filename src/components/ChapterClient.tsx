@@ -113,11 +113,11 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
   }), [content]);
 
   return (
-    <div className="bg-gray-950 min-h-screen text-gray-300 pt-12">
+    <div className="bg-[#09090b] min-h-screen text-zinc-300 pt-12">
       {/* Reading Progress Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-800">
+      <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-zinc-800">
         <div
-          className="h-full bg-white/80 transition-[width] duration-150 ease-out"
+          className="h-full bg-violet-500/80 transition-[width] duration-150 ease-out"
           style={{ width: `${readingProgress}%` }}
         />
       </div>
@@ -125,7 +125,7 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
       <main className="container mx-auto px-4 md:px-8 lg:px-36">
         <header className="py-3 flex justify-between items-center gap-4 mb-8">
           <Button variant="outline" size="icon" onClick={() => router.push(`/novel/${novelSlug}`)} aria-label="Back to novel">
-            <ArrowLeft className="h-5 w-5 text-gray-900" />
+            <ArrowLeft className="h-5 w-5" />
           </Button>
 
           <h1 className="text-lg font-semibold text-white text-center flex-grow mx-4">{chapterTitle}</h1>
@@ -133,7 +133,7 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, prevChapter, nextChap
           <DropdownMenu>
             <DropdownMenuTrigger asChild={false}>
               <Button variant="outline" size="icon" aria-label="Reading settings">
-                <Settings className="h-5 w-5 text-gray-900" />
+                <Settings className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">

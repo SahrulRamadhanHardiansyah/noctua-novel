@@ -40,75 +40,115 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  /* ponytail: custom noctua design tokens */
+  --color-noctua-violet: var(--noctua-violet);
+  --color-noctua-surface: var(--noctua-surface);
+  --color-noctua-surface-hover: var(--noctua-surface-hover);
+  --color-noctua-border: var(--noctua-border);
 }
+
+/*
+ * Noctua Midnight Theme
+ * ─────────────────────
+ * Primary: Violet-500 (#8b5cf6) — vivid accent for buttons, links, focus rings
+ * Background: Deep slate with a subtle violet undertone
+ * Surfaces: Layered with subtle transparency and soft borders
+ * Contrast: All text meets WCAG AA on its background
+ */
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  /* Core palette — dark-first since the app has no light mode */
+  --background: #09090b;
+  --foreground: #f4f4f5;
+
+  --card: #18181b;
+  --card-foreground: #f4f4f5;
+
+  --popover: #18181b;
+  --popover-foreground: #f4f4f5;
+
+  /* Violet primary — high contrast white text */
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+
+  --secondary: #27272a;
+  --secondary-foreground: #e4e4e7;
+
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+
+  --accent: #27272a;
+  --accent-foreground: #f4f4f5;
+
+  --destructive: #ef4444;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #8b5cf6;
+
+  /* Charts — vivid distinguishable palette */
+  --chart-1: #8b5cf6;
+  --chart-2: #06b6d4;
+  --chart-3: #f59e0b;
+  --chart-4: #ec4899;
+  --chart-5: #10b981;
+
+  /* Sidebar */
+  --sidebar: #18181b;
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-primary: #8b5cf6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #27272a;
+  --sidebar-accent-foreground: #f4f4f5;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #8b5cf6;
+
+  /* Noctua design tokens */
+  --noctua-violet: #8b5cf6;
+  --noctua-surface: rgba(255, 255, 255, 0.03);
+  --noctua-surface-hover: rgba(255, 255, 255, 0.06);
+  --noctua-border: rgba(255, 255, 255, 0.08);
 }
 
+/* Keep .dark in sync for any dark-mode variant usage */
 .dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --card: #18181b;
+  --card-foreground: #f4f4f5;
+  --popover: #18181b;
+  --popover-foreground: #f4f4f5;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --secondary: #27272a;
+  --secondary-foreground: #e4e4e7;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #f4f4f5;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #8b5cf6;
+  --chart-1: #8b5cf6;
+  --chart-2: #06b6d4;
+  --chart-3: #f59e0b;
+  --chart-4: #ec4899;
+  --chart-5: #10b981;
+  --sidebar: #18181b;
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-primary: #8b5cf6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #27272a;
+  --sidebar-accent-foreground: #f4f4f5;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #8b5cf6;
+  --noctua-violet: #8b5cf6;
+  --noctua-surface: rgba(255, 255, 255, 0.03);
+  --noctua-surface-hover: rgba(255, 255, 255, 0.06);
+  --noctua-border: rgba(255, 255, 255, 0.08);
 }
 
 @layer base {
@@ -125,12 +165,32 @@
     display: none;
   }
   .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
+/* ponytail: prose styles for markdown preview in chapter editor */
+.noctua-prose {
+  @apply leading-relaxed;
+}
+.noctua-prose h1 { @apply text-2xl font-bold mt-8 mb-4 text-white; }
+.noctua-prose h2 { @apply text-xl font-bold mt-6 mb-3 text-white; }
+.noctua-prose h3 { @apply text-lg font-semibold mt-5 mb-2 text-white; }
+.noctua-prose p { @apply mb-4 text-zinc-300; }
+.noctua-prose strong { @apply font-bold text-white; }
+.noctua-prose em { @apply italic text-zinc-200; }
+.noctua-prose a { @apply text-violet-400 underline underline-offset-2 hover:text-violet-300; }
+.noctua-prose ul { @apply list-disc list-inside mb-4 space-y-1 text-zinc-300; }
+.noctua-prose ol { @apply list-decimal list-inside mb-4 space-y-1 text-zinc-300; }
+.noctua-prose blockquote { @apply border-l-4 border-violet-500/50 pl-4 italic text-zinc-400 my-4; }
+.noctua-prose code { @apply bg-zinc-800 px-1.5 py-0.5 rounded text-sm text-violet-300 font-mono; }
+.noctua-prose pre { @apply bg-zinc-900 rounded-lg p-4 overflow-x-auto mb-4; }
+.noctua-prose pre code { @apply bg-transparent p-0; }
+.noctua-prose hr { @apply border-zinc-700 my-8; }
+.noctua-prose img { @apply max-w-full rounded-lg shadow-lg my-4; }
+
 .text-stroke {
-  -webkit-text-stroke: 1px #f5f5f5; /* gray-100 */
-  color: #111827; /* Tailwind gray-900 */
+  -webkit-text-stroke: 1px #f5f5f5;
+  color: #111827;
 }

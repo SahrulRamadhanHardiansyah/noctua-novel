@@ -3,8 +3,9 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="px-6 md:px-16 lg:px-36 pt-20 w-full bg-gray-950 text-gray-300">
-      <div className="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-500 pb-14">
+    <footer className="px-6 md:px-16 lg:px-36 pt-20 w-full bg-[#09090b] text-zinc-400 border-t border-white/[0.06] relative">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+      <div className="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-white/[0.06] pb-14">
         <div className="md:max-w-96">
           <h2 className="text-xl font-bold text-white">NoctuaNovel</h2>
           <p className="mt-4 text-sm">
@@ -16,16 +17,16 @@ const Footer = () => {
             <h2 className="font-semibold mb-5">Navigation</h2>
             <ul className="text-sm space-y-2">
               <li>
-                <Link href="/" className="hover:text-white transition-colors">Home</Link>
+                <Link href="/" className="text-zinc-400 hover:text-violet-400 transition-colors">Home</Link>
               </li>
               <li>
-                <Link href="/#latest" className="hover:text-white transition-colors">Latest</Link>
+                <Link href="/#latest" className="text-zinc-400 hover:text-violet-400 transition-colors">Latest</Link>
               </li>
               <li>
-                <Link href="/#editors-choice" className="hover:text-white transition-colors">Editor&apos;s Choice</Link>
+                <Link href="/#editors-choice" className="text-zinc-400 hover:text-violet-400 transition-colors">Editor&apos;s Choice</Link>
               </li>
               <li>
-                <Link href="/#recommendation" className="hover:text-white transition-colors">Recommendation</Link>
+                <Link href="/#recommendation" className="text-zinc-400 hover:text-violet-400 transition-colors">Recommendation</Link>
               </li>
             </ul>
           </div>
@@ -33,16 +34,16 @@ const Footer = () => {
             <h2 className="font-semibold mb-5">About</h2>
             <ul className="text-sm space-y-2">
               <li>
-                <span className="text-gray-400">Built with Next.js</span>
+                <span className="text-zinc-500">Built with Next.js</span>
               </li>
               <li>
-                <span className="text-gray-400">Powered by Prisma</span>
+                <span className="text-zinc-500">Powered by Prisma</span>
               </li>
             </ul>
           </div>
         </div>
       </div>
-      <p className="pt-4 text-center text-sm pb-5">Copyright {new Date().getFullYear()} © NoctuaNovel. All Rights Reserved.</p>
+      <p className="pt-4 text-center text-sm pb-5 text-zinc-500">Copyright {new Date().getFullYear()} © NoctuaNovel. All Rights Reserved.</p>
     </footer>
   );
 };

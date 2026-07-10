@@ -139,8 +139,8 @@ export default function CoinsPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="bg-gray-950 text-white min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
+      <div className="bg-[#09090b] text-white min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-zinc-500" />
       </div>
     );
   }
@@ -156,32 +156,32 @@ export default function CoinsPage() {
     : 0;
 
   return (
-    <div className="bg-gray-950 text-white min-h-screen pt-28 pb-16">
+    <div className="bg-[#09090b] text-white min-h-screen pt-28 pb-16">
       <div className="container mx-auto px-6 md:px-16 lg:px-36 space-y-10">
         {/* Balance Card */}
-        <div className="bg-gradient-to-br from-amber-500/20 via-yellow-500/10 to-orange-500/20 border border-amber-500/30 rounded-2xl p-8 text-center">
+        <div className="bg-gradient-to-br from-violet-500/15 via-violet-600/10 to-purple-500/15 border border-violet-500/20 rounded-2xl p-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Coins className="w-10 h-10 text-amber-400" />
-            <span className="text-5xl font-bold text-amber-300">
+            <Coins className="w-10 h-10 text-violet-400" />
+            <span className="text-5xl font-bold text-violet-300">
               {balance.toLocaleString()}
             </span>
           </div>
-          <p className="text-gray-400 text-sm mt-1">Your Coin Balance</p>
+          <p className="text-zinc-500 text-sm mt-1">Your Coin Balance</p>
         </div>
 
         {/* Daily Check-in */}
         {checkIn && (
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <CalendarCheck className="w-5 h-5 text-primary" />
+              <CalendarCheck className="w-5 h-5 text-violet-400" />
               <h2 className="text-xl font-semibold">Daily Check-in</h2>
               {checkIn.currentStreak > 0 && (
-                <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full">
                   {checkIn.currentStreak} day streak
                 </span>
               )}
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <div className="bg-zinc-900/50 border border-white/[0.06] rounded-2xl p-6">
               {/* 7-day circles */}
               <div className="flex items-center justify-between gap-2 sm:gap-4 mb-6">
                 {checkIn.weekRewards.map((reward, i) => {
@@ -198,10 +198,10 @@ export default function CoinsPage() {
                       <div
                         className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                           isDone
-                            ? "bg-primary text-white"
+                            ? "bg-violet-600 text-white"
                             : isCurrent
-                              ? "bg-primary/20 border-2 border-primary text-primary animate-pulse"
-                              : "bg-gray-800 border border-gray-700 text-gray-500"
+                              ? "bg-violet-500/20 border-2 border-violet-500 text-violet-400 animate-pulse"
+                              : "bg-zinc-800/50 border border-white/[0.08] text-zinc-600"
                         }`}
                       >
                         {isDone ? (
@@ -211,7 +211,7 @@ export default function CoinsPage() {
                         )}
                       </div>
                       <span
-                        className={`text-[10px] sm:text-xs ${isDone ? "text-primary" : isCurrent ? "text-amber-400 font-semibold" : "text-gray-600"}`}
+                        className={`text-[10px] sm:text-xs ${isDone ? "text-violet-400" : isCurrent ? "text-amber-400 font-semibold" : "text-zinc-600"}`}
                       >
                         +{reward}
                       </span>
@@ -226,8 +226,8 @@ export default function CoinsPage() {
                 disabled={!checkIn.canCheckIn || checkingIn}
                 className={`w-full py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
                   checkIn.canCheckIn
-                    ? "bg-primary hover:bg-primary/90 text-white cursor-pointer"
-                    : "bg-gray-800 text-gray-500 cursor-not-allowed"
+                    ? "bg-violet-600 hover:bg-violet-500 text-white cursor-pointer"
+                    : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
                 }`}
               >
                 {checkingIn ? (
@@ -249,7 +249,7 @@ export default function CoinsPage() {
         {missions.length > 0 && (
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <Target className="w-5 h-5 text-primary" />
+              <Target className="w-5 h-5 text-violet-400" />
               <h2 className="text-xl font-semibold">Reading Missions</h2>
             </div>
             <div className="space-y-3">
@@ -261,29 +261,29 @@ export default function CoinsPage() {
                 return (
                   <div
                     key={mission.id}
-                    className="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4"
+                    className="bg-zinc-900/50 border border-white/[0.06] rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-medium text-sm truncate">
                           {mission.title}
                         </h3>
-                        <span className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full shrink-0 uppercase">
+                        <span className="text-[10px] bg-zinc-800/50 text-zinc-500 px-2 py-0.5 rounded-full shrink-0 uppercase">
                           {mission.type}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500 mb-2">
+                      <p className="text-xs text-zinc-500 mb-2">
                         {mission.description}
                       </p>
                       {/* Progress bar */}
                       <div className="flex items-center gap-3">
-                        <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-primary rounded-full transition-all duration-500"
+                            className="h-full bg-violet-500 rounded-full transition-all duration-500"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
-                        <span className="text-xs text-gray-400 shrink-0">
+                        <span className="text-xs text-zinc-500 shrink-0">
                           {mission.progress}/{mission.target}
                         </span>
                       </div>
@@ -294,12 +294,12 @@ export default function CoinsPage() {
                         <Coins className="w-3.5 h-3.5" />+{mission.reward}
                       </span>
                       {mission.claimed ? (
-                        <span className="text-xs text-gray-500">Claimed</span>
+                        <span className="text-xs text-zinc-500">Claimed</span>
                       ) : mission.completed ? (
                         <button
                           onClick={() => handleClaim(mission.id)}
                           disabled={claimingId === mission.id}
-                          className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs rounded-lg font-semibold transition cursor-pointer flex items-center gap-1"
+                          className="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs rounded-lg font-semibold transition cursor-pointer flex items-center gap-1"
                         >
                           {claimingId === mission.id ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
@@ -308,7 +308,7 @@ export default function CoinsPage() {
                           )}
                         </button>
                       ) : (
-                        <span className="text-xs text-gray-600">
+                        <span className="text-xs text-zinc-600">
                           In Progress
                         </span>
                       )}
@@ -323,12 +323,12 @@ export default function CoinsPage() {
         {/* Transaction History */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <History className="w-5 h-5 text-primary" />
+            <History className="w-5 h-5 text-violet-400" />
             <h2 className="text-xl font-semibold">Transaction History</h2>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl divide-y divide-gray-800">
+          <div className="bg-zinc-900/50 border border-white/[0.06] rounded-2xl divide-y divide-white/[0.06]">
             {transactions.length === 0 ? (
-              <p className="p-6 text-center text-gray-500 text-sm">
+              <p className="p-6 text-center text-zinc-500 text-sm">
                 No transactions yet
               </p>
             ) : (
@@ -355,7 +355,7 @@ export default function CoinsPage() {
                       <p className="text-sm font-medium truncate">
                         {tx.description}
                       </p>
-                      <p className="text-[10px] text-gray-500">
+                      <p className="text-[10px] text-zinc-600">
                         {TYPE_LABELS[tx.type] || tx.type} ·{" "}
                         {new Date(tx.createdAt).toLocaleDateString(undefined, {
                           month: "short",
