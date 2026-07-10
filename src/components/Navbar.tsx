@@ -85,7 +85,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5 backdrop-blur-xl bg-[#09090b]/80 border-b border-white/[0.06]" aria-label="Main navigation">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5" aria-label="Main navigation">
       <Link href="/" className="max-md:flex-1">
         <h1 className="text-xl text-gray-100 font-bold">NoctuaNovel</h1>
       </Link>

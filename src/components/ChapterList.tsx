@@ -15,6 +15,12 @@ type ChapterListProps = {
   chapters: Chapter[];
 };
 
+// ponytail: strip "Novel Title - " prefix from API's chapter_full_title
+const getShortTitle = (fullTitle: string) => {
+  const dashIdx = fullTitle.indexOf(" - ");
+  return dashIdx !== -1 ? fullTitle.substring(dashIdx + 3) : fullTitle;
+};
+
 export const ChapterList = ({ chapters }: ChapterListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -90,7 +96,7 @@ export const ChapterList = ({ chapters }: ChapterListProps) => {
                   <div className="flex items-center gap-3">
                     <BookOpen className="w-5 h-5 text-gray-100" />{" "}
                     <span className="font-medium text-gray-200">
-                      {chapter.chapter_full_title}
+                      {getShortTitle(chapter.chapter_full_title)}
                     </span>
                   </div>
                   <span className="text-sm text-gray-400">
