@@ -56,7 +56,7 @@ export default function QuoteExportModal({
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+      <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-white/[0.06]">
           <h3 className="text-lg font-semibold text-white">Export Quote</h3>
@@ -87,10 +87,10 @@ export default function QuoteExportModal({
           </div>
 
           {/* Quote Card Preview */}
-          <div className="flex justify-center">
+          <div className="flex justify-center overflow-x-auto">
             <div
               ref={cardRef}
-              className="w-[400px] rounded-2xl overflow-hidden shadow-2xl"
+              className="w-[320px] sm:w-[400px] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
               style={{
                 background:
                   "linear-gradient(145deg, #0f0f12 0%, #1a1128 40%, #0f0f12 100%)",

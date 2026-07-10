@@ -3,16 +3,16 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="px-6 md:px-16 lg:px-36 pt-20 w-full bg-[#09090b] text-zinc-400 border-t border-white/[0.06] relative">
+    <footer className="px-4 sm:px-6 md:px-16 lg:px-36 pt-12 md:pt-20 w-full bg-[#09090b] text-zinc-400 border-t border-white/[0.06] relative">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
-      <div className="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-white/[0.06] pb-14">
+      <div className="flex flex-col md:flex-row justify-between w-full gap-8 md:gap-10 border-b border-white/[0.06] pb-10 md:pb-14">
         <div className="md:max-w-96">
-          <h2 className="text-xl font-bold text-white">NoctuaNovel</h2>
-          <p className="mt-4 text-sm">
+          <h2 className="text-lg md:text-xl font-bold text-white">NoctuaNovel</h2>
+          <p className="mt-3 md:mt-4 text-sm">
             Your gateway to the world of light novels. Discover, read, and enjoy thousands of translated novels from various genres.
           </p>
         </div>
-        <div className="flex-1 flex items-start md:justify-end gap-20 md:gap-40">
+        <div className="flex-1 flex items-start gap-12 sm:gap-16 md:justify-end md:gap-20 lg:gap-40">
           <div>
             <h2 className="font-semibold mb-5">Navigation</h2>
             <ul className="text-sm space-y-2">

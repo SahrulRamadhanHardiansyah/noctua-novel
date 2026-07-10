@@ -296,23 +296,24 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
         />
       </div>
 
-      <main className="container mx-auto px-4 md:px-8 lg:px-36">
-        <header className="py-3 flex justify-between items-center gap-4 mb-8">
-          <Button variant="outline" size="icon" onClick={() => router.push(`/novel/${novelSlug}`)} aria-label="Back to novel">
-            <ArrowLeft className="h-5 w-5" />
+      <main className="container mx-auto px-3 sm:px-4 md:px-8 lg:px-36">
+        <header className="py-2 sm:py-3 flex justify-between items-center gap-2 sm:gap-4 mb-6 sm:mb-8">
+          <Button variant="outline" size="icon" onClick={() => router.push(`/novel/${novelSlug}`)} aria-label="Back to novel" className="flex-shrink-0">
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
 
-          <h1 className="text-lg font-semibold text-white text-center flex-grow mx-4">{chapterTitle}</h1>
+          <h1 className="text-sm sm:text-base md:text-lg font-semibold text-white text-center flex-grow mx-2 sm:mx-4 truncate">{chapterTitle}</h1>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
             {/* Bookmark button */}
             <Button
               variant="outline"
               size="icon"
               onClick={() => setShowBookmarkDialog(true)}
               aria-label="Add bookmark"
+              className="w-8 h-8 sm:w-9 sm:h-9"
             >
-              <BookmarkPlus className="h-4 w-4" />
+              <BookmarkPlus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
 
             {/* Download for offline */}
@@ -321,8 +322,9 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
               size="icon"
               onClick={downloadForOffline}
               aria-label="Download for offline"
+              className="w-8 h-8 sm:w-9 sm:h-9"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
 
             {/* TTS button */}
@@ -331,13 +333,14 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
               size="icon"
               onClick={ttsState === "idle" ? speak : ttsState === "playing" ? pauseTts : resumeTts}
               aria-label="Text to speech"
+              className="w-8 h-8 sm:w-9 sm:h-9"
             >
-              {ttsState === "idle" ? <Volume2 className="h-4 w-4" /> : ttsState === "playing" ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              {ttsState === "idle" ? <Volume2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : ttsState === "playing" ? <Pause className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <Play className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
             </Button>
 
             {ttsState !== "idle" && (
-              <Button variant="outline" size="icon" onClick={stopTts} aria-label="Stop reading">
-                <Square className="h-4 w-4" />
+              <Button variant="outline" size="icon" onClick={stopTts} aria-label="Stop reading" className="w-8 h-8 sm:w-9 sm:h-9">
+                <Square className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             )}
           </div>
@@ -420,9 +423,9 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
 
         {/* Bookmark Dialog */}
         {showBookmarkDialog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
-              <h3 className="text-lg font-semibold text-white mb-4">Save Bookmark</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
+              <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Save Bookmark</h3>
               {selectedText && (
                 <div className="mb-4 p-3 bg-zinc-800/50 rounded-lg border border-white/[0.06]">
                   <p className="text-xs text-zinc-500 mb-1">Selected text:</p>
@@ -478,27 +481,27 @@ const ChapterClient = ({ chapterTitle, content, novelSlug, chapterSlug, prevChap
         )}
 
         {/* Chapter Navigation */}
-        <div className="flex justify-between items-center mt-12 pb-20 max-w-4xl mx-auto gap-4">
+        <div className="flex justify-between items-center mt-8 sm:mt-12 pb-16 sm:pb-20 max-w-4xl mx-auto gap-2 sm:gap-4">
           {prevChapter ? (
             <Link href={`/chapter/${prevChapter.slug}`} className="flex-1 min-w-0">
-              <Button variant="outline" className="w-full justify-start gap-2 text-left">
-                <ChevronLeft className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate max-w-[150px] sm:max-w-[200px]">{prevChapter.title}</span>
+              <Button variant="outline" size="sm" className="w-full justify-start gap-1 sm:gap-2 text-left text-xs sm:text-sm">
+                <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                <span className="truncate max-w-[80px] sm:max-w-[150px] md:max-w-[200px]">{prevChapter.title}</span>
               </Button>
             </Link>
           ) : (
             <div className="flex-1" />
           )}
 
-          <Button variant="secondary" onClick={() => router.push(`/novel/${novelSlug}`)} className="flex-shrink-0">
+          <Button variant="secondary" size="sm" onClick={() => router.push(`/novel/${novelSlug}`)} className="flex-shrink-0 text-xs sm:text-sm">
             List Chapter
           </Button>
 
           {nextChapter ? (
             <Link href={`/chapter/${nextChapter.slug}`} className="flex-1 min-w-0">
-              <Button variant="outline" className="w-full justify-end gap-2 text-right">
-                <span className="truncate max-w-[150px] sm:max-w-[200px]">{nextChapter.title}</span>
-                <ChevronRight className="h-4 w-4 flex-shrink-0" />
+              <Button variant="outline" size="sm" className="w-full justify-end gap-1 sm:gap-2 text-right text-xs sm:text-sm">
+                <span className="truncate max-w-[80px] sm:max-w-[150px] md:max-w-[200px]">{nextChapter.title}</span>
+                <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
               </Button>
             </Link>
           ) : (
