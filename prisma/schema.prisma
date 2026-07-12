@@ -21,6 +21,9 @@ model UserProfile {
   checkInStreak  Int      @default(0)
   lastCheckIn    DateTime?
 
+  // Role
+  role           String   @default("USER") // USER | ADMIN
+
   // Gamification
   xp             Int      @default(0)  // Total XP earned
   level          Int      @default(1)  // Current level

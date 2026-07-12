@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { sanitizeText, clampLength } from "@/lib/sanitize";
 
 const MAX_COMMENT_LENGTH = 2000;
 
@@ -11,6 +13,15 @@ export async function POST(request: Request) {
 
     if (!userId || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate limit: 10 comments per minute
+    const rateLimit = checkRateLimit(`comment:${userId}`, RATE_LIMITS.create);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: `Too many requests. Try again in ${rateLimit.retryAfter}s` },
+        { status: 429 }
+      );
     }
 
     const body = await request.json();
@@ -26,25 +37,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Comment content is required" }, { status: 400 });
     }
 
-    const trimmedContent = content.trim();
+    // Sanitize + clamp
+    const sanitizedContent = clampLength(sanitizeText(content), MAX_COMMENT_LENGTH);
 
-    if (trimmedContent.length === 0) {
+    if (sanitizedContent.length === 0) {
       return NextResponse.json({ error: "Comment cannot be empty" }, { status: 400 });
-    }
-
-    if (trimmedContent.length > MAX_COMMENT_LENGTH) {
-      return NextResponse.json(
-        { error: `Comment must be ${MAX_COMMENT_LENGTH} characters or less` },
-        { status: 400 }
-      );
     }
 
     const comment = await prisma.comment.create({
       data: {
         novelSlug,
-        content: trimmedContent,
+        content: sanitizedContent,
         userId,
-        authorName: user.firstName || user.username || "Anonymous",
+        authorName: sanitizeText(user.firstName || user.username || "Anonymous"),
         authorImageUrl: user.imageUrl,
       },
     });

@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 const WEEK_REWARDS = [10, 15, 20, 25, 30, 40, 60];
 
@@ -53,6 +54,15 @@ export async function POST() {
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Rate limit: 3 check-in attempts per minute
+    const rateLimit = checkRateLimit(`checkin:${userId}`, RATE_LIMITS.checkin);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: `Too many requests. Try again in ${rateLimit.retryAfter}s` },
+        { status: 429 }
+      );
+    }
 
     const profile = await prisma.userProfile.upsert({
       where: { userId },

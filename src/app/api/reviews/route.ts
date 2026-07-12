@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
+import { sanitizeText, clampLength } from "@/lib/sanitize";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,9 +30,19 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    // Rate limit
+    const rateLimit = checkRateLimit(`review:${userId}`, RATE_LIMITS.create);
+    if (!rateLimit.success) {
+      return NextResponse.json({ error: `Too many requests. Try again in ${rateLimit.retryAfter}s` }, { status: 429 });
+    }
+
     const { novelId, rating, title, content } = await req.json();
     if (!novelId || !rating || rating < 1 || rating > 5)
       return NextResponse.json({ error: "novelId and rating (1-5) required" }, { status: 400 });
+
+    // Sanitize text fields
+    const sanitizedTitle = title ? clampLength(sanitizeText(title), 200) : null;
+    const sanitizedContent = content ? clampLength(sanitizeText(content), 2000) : "";
 
     const user = await currentUser();
     const authorName = user?.fullName || user?.username || "Anonymous";
@@ -38,8 +50,8 @@ export async function POST(req: NextRequest) {
 
     const review = await prisma.review.upsert({
       where: { userId_novelId: { userId, novelId } },
-      update: { rating, title: title || null, content: content || null, authorName, authorImageUrl },
-      create: { userId, novelId, rating, title: title || null, content: content || null, authorName, authorImageUrl },
+      update: { rating, title: sanitizedTitle, content: sanitizedContent, authorName, authorImageUrl },
+      create: { userId, novelId, rating, title: sanitizedTitle, content: sanitizedContent, authorName, authorImageUrl },
     });
 
     // Notify novel author

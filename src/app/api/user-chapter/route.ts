@@ -2,11 +2,19 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { slugify } from "@/lib/utils/slug";
+import { sanitizeText, clampLength } from "@/lib/sanitize";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Rate limit
+    const rateLimit = checkRateLimit(`chapter:${userId}`, RATE_LIMITS.create);
+    if (!rateLimit.success) {
+      return NextResponse.json({ error: `Too many requests. Try again in ${rateLimit.retryAfter}s` }, { status: 429 });
+    }
 
     const { novelId, title, content, orderIndex, isDraft, isLocked, coinPrice, scheduledAt } = await request.json();
 
@@ -20,16 +28,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Novel not found or unauthorized" }, { status: 403 });
     }
 
-    const slug = `${novel.slug}-chapter-${orderIndex}-${slugify(title).substring(0, 20)}`;
+    // Sanitize title (plain text), content kept as-is since it's Markdown rendered by react-markdown
+    const sanitizedTitle = clampLength(sanitizeText(title), 300);
+    const trimmedContent = content.trim();
+
+    const slug = `${novel.slug}-chapter-${orderIndex}-${slugify(sanitizedTitle).substring(0, 20)}`;
 
     const chapter = await prisma.userChapter.create({
       data: {
         novelId,
-        title: title.trim(),
-        content: content.trim(),
+        title: sanitizedTitle,
+        content: trimmedContent,
         orderIndex: orderIndex || 0,
         slug,
-        wordCount: content.trim().split(/\s+/).filter(Boolean).length,
+        wordCount: trimmedContent.split(/\s+/).filter(Boolean).length,
         isDraft: isDraft ?? false,
         isLocked: isLocked ?? false,
         coinPrice: coinPrice ?? 0,
